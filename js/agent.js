@@ -7,6 +7,7 @@ let session = null;
 let _outputs = {};
 let _currentTab = 0;
 let _currentTone = 'balanced';
+let _lastDataContext = ''; // stored after generate so tone changes can reuse it
 
 const OUTPUT_TYPES = [
   { id: 'executive',    label: 'Executive',    audience: 'CEO · CPO · C-Suite',      emoji: '🎯' },
@@ -181,6 +182,7 @@ async function generateUpdates() {
     });
 
     if (extraContext) dataContext += `\nADDITIONAL CONTEXT:\n${extraContext}`;
+    _lastDataContext = dataContext; // save for tone rewrites
 
     // Run all 6 in parallel
     await Promise.allSettled(OUTPUT_TYPES.map(async type => {
@@ -341,10 +343,45 @@ function copyAll() {
   });
 }
 
-function setTone(tone, btn) {
+async function setTone(tone, btn) {
+  if (_currentTone === tone) return;
   _currentTone = tone;
-  document.querySelectorAll('.tone-btn').forEach(b => b.classList.remove('active'));
+
+  // Update button states
+  document.querySelectorAll('.tone-btn').forEach(b => {
+    b.classList.remove('on');
+    b.disabled = false;
+  });
   btn.classList.add('on');
+
+  // No outputs yet — just store preference
+  const currentType = OUTPUT_TYPES[_currentTab];
+  if (!currentType || !_outputs[currentType.id]) return;
+
+  const apiKey = localStorage.getItem('cascade_api_key');
+  if (!apiKey) return;
+
+  // Use stored context from last generate run
+  const dataContext = _lastDataContext;
+  if (!dataContext) return;
+
+  // Show loading in output body
+  const bodyEl = document.getElementById('output-body');
+  if (bodyEl) bodyEl.textContent = 'Rewriting in ' + tone + ' tone...';
+
+  // Disable all tone buttons while regenerating
+  document.querySelectorAll('.tone-btn').forEach(b => b.disabled = true);
+
+  try {
+    const newOutput = await callClaude(currentType.id, dataContext, apiKey);
+    _outputs[currentType.id] = newOutput;
+    if (bodyEl) bodyEl.textContent = newOutput;
+  } catch(e) {
+    if (bodyEl) bodyEl.textContent = _outputs[currentType.id] || '';
+    CascadeTools.showToast('⚠ Tone rewrite failed — showing original');
+  } finally {
+    document.querySelectorAll('.tone-btn').forEach(b => b.disabled = false);
+  }
 }
 
 // ── HISTORY ──
