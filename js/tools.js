@@ -208,15 +208,15 @@ window.CascadeTools = (() => {
 
     container.innerHTML = TOOLS.map(t => {
       const isConnected = _connected.has(t.id);
-      return `<div class="tool-row">
-        <div class="tool-em" style="background:${t.bg}">${t.icon}</div>
-        <div class="tool-txt">
-          <div class="tool-nm">${t.name}</div>
-          <div class="tool-ds">${isConnected ? '✓ Connected · '+t.description : t.description}</div>
+      return `<div class="tool-item">
+        <div class="tool-icon" style="background:${t.bg}">${t.icon}</div>
+        <div class="tool-info">
+          <div class="tool-name">${t.name}</div>
+          <div class="tool-desc">${isConnected ? '✓ '+t.description : t.description}</div>
         </div>
         ${isConnected
-          ? `<button class="tbtn tbtn-x" onclick="CascadeTools.disconnect('${t.id}')">Disconnect</button>`
-          : `<button class="tbtn tbtn-c" onclick="CascadeTools.connect('${t.id}')">Connect</button>`
+          ? `<button class="t-btn t-btn-x" onclick="CascadeTools.disconnect('${t.id}')">Disconnect</button>`
+          : `<button class="t-btn t-btn-c" onclick="CascadeTools.connect('${t.id}')">Connect</button>`
         }
       </div>`;
     }).join('');
@@ -224,7 +224,7 @@ window.CascadeTools = (() => {
     const count = _connected.size;
     if (badgeEl) {
       badgeEl.textContent = count + ' tool' + (count!==1?'s':'') + ' connected';
-      badgeEl.className = 'conn-count' + (count > 0 ? ' has' : '');
+      badgeEl.className = 'tools-badge' + (count > 0 ? ' has' : '');
     }
     const pullBtn = document.getElementById('pull-btn');
     if (pullBtn) pullBtn.disabled = count === 0;
@@ -242,11 +242,12 @@ window.CascadeTools = (() => {
 
   function showConnectModal(tool) {
     // Remove existing modal
-    document.getElementById('connect-modal')?.remove();
+    document.getElementById('connect-modal')?.classList.remove('open');
 
-    const modal = document.createElement('div');
-    modal.id = 'connect-modal';
-    modal.className = 'modal-bg';
+    const modalOverlay = document.getElementById('connect-modal');
+    const modal = document.getElementById('modal-content');
+    if (!modalOverlay || !modal) return;
+    
     modal.innerHTML = `
       <div style="background:var(--ink2);border:1px solid var(--border2);border-radius:16px;padding:28px;width:100%;max-width:420px;margin:20px">
         <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
@@ -271,7 +272,7 @@ window.CascadeTools = (() => {
   }
 
   function confirmConnect(toolId) {
-    document.getElementById('connect-modal')?.remove();
+    document.getElementById('connect-modal')?.classList.remove('open');
     _connected.add(toolId);
     saveConnected();
     renderTools();
@@ -325,7 +326,7 @@ window.CascadeTools = (() => {
 
     const pulled = document.getElementById('pulled-data');
     if (!pulled) return;
-    pulled.style.display = 'block';
+    pulled.classList.add('show');
 
     const now = new Date();
     const metaEl = document.getElementById('pulled-meta');
@@ -348,11 +349,14 @@ window.CascadeTools = (() => {
         </div>`;
     }).join('');
 
+    // Show context card
+    const ctxCard = document.getElementById('ctx-card');
+    if (ctxCard) ctxCard.classList.add('show');
     // Update conn-count badge
     const connCount = document.getElementById('conn-count');
     if (connCount) {
       connCount.textContent = tools.length + ' tool' + (tools.length!==1?'s':'') + ' scanned';
-      connCount.className = 'conn-count has';
+      connCount.className = 'tools-badge has';
     }
   }
 

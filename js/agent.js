@@ -31,10 +31,10 @@ async function init() {
   if (!session) return;
 
   // Show user
-  const emailEl = document.getElementById('user-email-display');
+  const emailEl = document.getElementById('user-name');
   const name = session.user.email.split('@')[0];
   if (emailEl) emailEl.textContent = name;
-  const avatarEl = document.getElementById('user-avatar');
+  const avatarEl = document.getElementById('user-av');
   if (avatarEl) avatarEl.textContent = name[0].toUpperCase();
 
   // Load API key
@@ -59,9 +59,9 @@ async function initDemoMode() {
     signoutBtn.textContent = 'Sign up free';
     signoutBtn.onclick = () => location.href = 'login.html?mode=signup';
   }
-  const emailEl = document.getElementById('user-email-display');
+  const emailEl = document.getElementById('user-name');
   if (emailEl) emailEl.textContent = 'demo user';
-  const avatarEl = document.getElementById('user-avatar');
+  const avatarEl = document.getElementById('user-av');
   if (avatarEl) avatarEl.textContent = 'D';
 
   // Show demo banner
@@ -118,7 +118,7 @@ function updateOnboarding() {
   const s1n = document.getElementById('step-1-num');
   const s2n = document.getElementById('step-2-num');
   const s3n = document.getElementById('step-3-num');
-  const s1a = document.getElementById('step-1-action');
+  const s1a = document.getElementById('step-1-cta');
   const pullEmpty = document.getElementById('pull-empty');
   const onboard = document.getElementById('onboard-steps');
   const dot = document.getElementById('api-dot');
@@ -140,7 +140,7 @@ function updateOnboarding() {
   if (!hasTools) {
     // Step 1 done, Step 2 active
     setStep(s1, 'done'); setStep(s2, 'active'); setStep(s3, 'inactive');
-    if (s1n) s1n.innerHTML = '✓';
+    if (s1n) s1n.textContent = '✓';
     if (s2n) s2n.textContent = '2';
     if (s3n) s3n.textContent = '3';
     if (s1a) s1a.style.display = 'none';
@@ -151,8 +151,8 @@ function updateOnboarding() {
 
   // Steps 1+2 done, Step 3 active
   setStep(s1, 'done'); setStep(s2, 'done'); setStep(s3, 'active');
-  if (s1n) s1n.innerHTML = '✓';
-  if (s2n) s2n.innerHTML = '✓';
+  if (s1n) s1n.textContent = '✓';
+  if (s2n) s2n.textContent = '✓';
   if (s3n) s3n.textContent = '3';
   if (s1a) s1a.style.display = 'none';
 
@@ -374,19 +374,23 @@ Write the email update now. Start with the subject line.`,
 
 // ── RENDER OUTPUTS ──
 function renderOutputs() {
-  const panel = document.getElementById('outputs-panel');
-  panel.classList.add('show');
-  const ph = document.getElementById('out-placeholder');
-  if (ph) ph.style.display = 'none';
-
+  // Build tabs in drawer
   const tabs = document.getElementById('outputs-tabs');
-  tabs.innerHTML = OUTPUT_TYPES.map((t, i) => `
+  if (tabs) tabs.innerHTML = OUTPUT_TYPES.map((t, i) => `
     <button class="out-tab ${i===0?'active':''}" onclick="switchOutputTab(${i},this)">
       ${t.emoji} ${t.label}
     </button>`).join('');
 
   showOutput(0);
-  panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  // Open the drawer
+  const overlay = document.getElementById('outputs-overlay');
+  if (overlay) overlay.classList.add('open');
+}
+
+function closeOutputs() {
+  const overlay = document.getElementById('outputs-overlay');
+  if (overlay) overlay.classList.remove('open');
 }
 
 function switchOutputTab(idx, btn) {
@@ -398,9 +402,8 @@ function switchOutputTab(idx, btn) {
 
 function showOutput(idx) {
   const type = OUTPUT_TYPES[idx];
-  document.getElementById('output-audience').textContent = type.audience;
-  document.getElementById('output-name').textContent = type.emoji + ' ' + type.label + ' Update';
-  document.getElementById('output-body').textContent = _outputs[type.id] || 'Generating...';
+  const bodyEl = document.getElementById('output-body');
+  if (bodyEl) bodyEl.textContent = _outputs[type.id] || 'Generating...';
 }
 
 function copyCurrentOutput() {
@@ -496,11 +499,11 @@ async function loadHistory() {
     }
 
     el.innerHTML = data.map(u => `
-      <div class="hist-item" onclick="loadHistoryItem('${u.id}')">
+      <div class="hist-card" onclick="loadHistoryItem('${u.id}')">
         <div class="hist-date">${new Date(u.created_at).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})}</div>
         <div class="hist-prev">${(u.outputs?.executive || 'Update generated').slice(0,80)}...</div>
-        <div class="hist-pills">
-          ${(u.tools_used||[]).map(t => `<span class="hist-pill">${t}</span>`).join('')}
+        <div class="hist-tags">
+          ${(u.tools_used||[]).map(t => `<span class="hist-tag">${t}</span>`).join('')}
         </div>
       </div>`).join('');
   } catch(e) { console.warn('History load failed:', e.message); }
