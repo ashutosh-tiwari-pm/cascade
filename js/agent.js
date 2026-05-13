@@ -32,13 +32,97 @@ async function init() {
   const key = localStorage.getItem('cascade_api_key') || '';
   const keyInput = document.getElementById('api-key-input');
   if (keyInput && key) keyInput.value = '••••••••••••••••';
-  updateApiKeyStatus();
 
   // Render tools
   CascadeTools.renderTools();
 
   // Load history
   loadHistory();
+
+  // Wire onboarding
+  updateOnboarding();
+}
+
+// ── ONBOARDING ──
+function updateOnboarding() {
+  const hasKey = !!localStorage.getItem('cascade_api_key');
+  const hasTools = CascadeTools.getConnectedTools().length > 0;
+
+  const s1 = document.getElementById('step-1');
+  const s2 = document.getElementById('step-2');
+  const s3 = document.getElementById('step-3');
+  const s1n = document.getElementById('step-1-num');
+  const s2n = document.getElementById('step-2-num');
+  const s3n = document.getElementById('step-3-num');
+  const s1a = document.getElementById('step-1-action');
+  const pullEmpty = document.getElementById('pull-empty');
+  const onboard = document.getElementById('onboard-steps');
+  const dot = document.getElementById('api-dot');
+
+  // API dot
+  if (dot) { if (hasKey) dot.classList.add('live'); else dot.classList.remove('live'); }
+
+  if (!hasKey) {
+    // Step 1 active
+    setStep(s1, 'active'); setStep(s2, 'inactive'); setStep(s3, 'inactive');
+    if (s1n) s1n.textContent = '1';
+    if (s2n) s2n.textContent = '2';
+    if (s3n) s3n.textContent = '3';
+    if (pullEmpty) pullEmpty.style.display = 'none';
+    if (onboard) onboard.style.display = 'block';
+    return;
+  }
+
+  if (!hasTools) {
+    // Step 1 done, Step 2 active
+    setStep(s1, 'done'); setStep(s2, 'active'); setStep(s3, 'inactive');
+    if (s1n) s1n.innerHTML = '✓';
+    if (s2n) s2n.textContent = '2';
+    if (s3n) s3n.textContent = '3';
+    if (s1a) s1a.style.display = 'none';
+    if (pullEmpty) pullEmpty.style.display = 'none';
+    if (onboard) onboard.style.display = 'block';
+    return;
+  }
+
+  // Steps 1+2 done, Step 3 active
+  setStep(s1, 'done'); setStep(s2, 'done'); setStep(s3, 'active');
+  if (s1n) s1n.innerHTML = '✓';
+  if (s2n) s2n.innerHTML = '✓';
+  if (s3n) s3n.textContent = '3';
+  if (s1a) s1a.style.display = 'none';
+
+  // Hide onboarding, show pull button
+  if (onboard) onboard.style.display = 'none';
+  if (pullEmpty) pullEmpty.style.display = 'block';
+}
+
+function setStep(el, state) {
+  if (!el) return;
+  el.className = 'step ' + state;
+  // make inactive non-clickable
+  el.style.pointerEvents = state === 'inactive' ? 'none' : '';
+}
+
+function focusApiKey() {
+  const input = document.getElementById('api-key-input');
+  if (input) {
+    input.focus();
+    input.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    input.style.borderColor = 'var(--blue)';
+    setTimeout(() => input.style.borderColor = '', 2000);
+  }
+}
+
+function focusTools() {
+  const toolsList = document.getElementById('tools-list');
+  if (toolsList) toolsList.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  // Flash first connect button
+  const firstBtn = toolsList?.querySelector('.tbtn-c');
+  if (firstBtn) {
+    firstBtn.style.background = 'rgba(94,114,255,.3)';
+    setTimeout(() => firstBtn.style.background = '', 1500);
+  }
 }
 
 // ── API KEY ──
@@ -47,16 +131,12 @@ function saveApiKey() {
   if (!val || val.includes('•')) return;
   localStorage.setItem('cascade_api_key', val);
   document.getElementById('api-key-input').value = '••••••••••••••••';
-  updateApiKeyStatus();
   CascadeTools.showToast('✓ API key saved');
+  updateOnboarding(); // progress onboarding
 }
 
 function updateApiKeyStatus() {
-  const key = localStorage.getItem('cascade_api_key');
-  const dot = document.getElementById('api-dot');
-  if (!dot) return;
-  if (key) dot.classList.add('set');
-  else dot.classList.remove('set');
+  updateOnboarding();
 }
 
 // ── PULL DATA ──

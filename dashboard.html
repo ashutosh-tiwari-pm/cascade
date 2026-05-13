@@ -48,7 +48,7 @@ body{font-family:'Satoshi',sans-serif;color:var(--t1);min-height:100vh;display:f
 .api-card-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
 .api-card-title{font-size:.875rem;font-weight:700;color:var(--t1);letter-spacing:-.02em}
 .api-dot{width:8px;height:8px;border-radius:50%;background:var(--t3);transition:all .3s}
-.api-dot.live{background:var(--green);box-shadow:0 0 10px rgba(0,223,160,.5)}
+.api-dot.live,.api-dot.set{background:var(--green);box-shadow:0 0 10px rgba(0,223,160,.5)}
 .api-input{width:100%;padding:8px 11px;background:var(--s3);border:1px solid var(--b1);border-radius:8px;font-family:monospace;font-size:.75rem;color:var(--t1);outline:none;margin-bottom:8px;transition:border-color .15s}
 .api-input:focus{border-color:var(--blue)}
 .api-input::placeholder{color:var(--t3)}
@@ -175,6 +175,27 @@ body{font-family:'Satoshi',sans-serif;color:var(--t1);min-height:100vh;display:f
 .hist-pills{display:flex;gap:3px;flex-wrap:wrap}
 .hist-pill{font-size:.5rem;font-weight:700;padding:2px 6px;border-radius:4px;background:var(--blue-a);color:var(--blue)}
 
+
+/* ── ONBOARDING STEPS ── */
+.onboard{margin-bottom:20px}
+.onboard-title{font-size:.6875rem;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px}
+.step{display:flex;align-items:flex-start;gap:12px;padding:12px 14px;border-radius:11px;border:1px solid var(--b1);margin-bottom:8px;transition:all .2s;cursor:pointer;background:var(--s1)}
+.step.done{opacity:.5;border-color:transparent;background:transparent;cursor:default}
+.step.active{border-color:rgba(94,114,255,.35);background:var(--blue-a)}
+.step.inactive{opacity:.4;cursor:default}
+.step-num{width:26px;height:26px;border-radius:50%;background:var(--s3);border:1px solid var(--b2);display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;color:var(--t2);flex-shrink:0;transition:all .2s}
+.step.active .step-num{background:var(--blue);border-color:var(--blue);color:#fff}
+.step.done .step-num{background:var(--green-a);border-color:rgba(0,223,160,.3);color:var(--green)}
+.step-body{flex:1;min-width:0}
+.step-label{font-size:.875rem;font-weight:700;color:var(--t1);letter-spacing:-.01em;margin-bottom:2px}
+.step.done .step-label{color:var(--t3)}
+.step.done .step-num{content:"✓"}
+.step.inactive .step-label{color:var(--t2)}
+.step-desc{font-size:.75rem;color:var(--t2);line-height:1.5}
+.step-action{font-size:.6875rem;font-weight:700;color:var(--blue);margin-top:5px;display:flex;align-items:center;gap:4px}
+.step-action svg{transition:transform .15s}
+.step:hover .step-action svg{transform:translateX(3px)}
+
 /* Toast */
 .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--s3);border:1px solid var(--b2);border-radius:10px;padding:10px 18px;font-size:.875rem;font-weight:500;color:var(--t1);z-index:9999;white-space:nowrap;display:flex;align-items:center;gap:8px;box-shadow:0 8px 32px rgba(0,0,0,.5);animation:tin .2s ease}
 @keyframes tin{from{opacity:0;transform:translateX(-50%) translateY(8px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
@@ -269,12 +290,49 @@ body{font-family:'Satoshi',sans-serif;color:var(--t1);min-height:100vh;display:f
     </div>
 
     <div class="agent-body panel">
-      <!-- Empty -->
-      <div class="empty-box" id="pull-empty">
+      <!-- Onboarding steps -->
+      <div class="onboard" id="onboard-steps">
+        <div class="onboard-title">Get started — 3 steps</div>
+
+        <div class="step active" id="step-1" onclick="focusApiKey()">
+          <div class="step-num" id="step-1-num">1</div>
+          <div class="step-body">
+            <div class="step-label">Add your Claude API key</div>
+            <div class="step-desc">Required to generate updates. Stored locally — never sent anywhere.</div>
+            <div class="step-action" id="step-1-action">
+              Add key in the sidebar
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </div>
+          </div>
+        </div>
+
+        <div class="step inactive" id="step-2" onclick="focusTools()">
+          <div class="step-num" id="step-2-num">2</div>
+          <div class="step-body">
+            <div class="step-label">Connect at least one tool</div>
+            <div class="step-desc">GitHub, Jira, Slack, Notion, Linear or Gmail — any one is enough to start.</div>
+            <div class="step-action" id="step-2-action">
+              Connect a tool in the sidebar
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </div>
+          </div>
+        </div>
+
+        <div class="step inactive" id="step-3">
+          <div class="step-num" id="step-3-num">3</div>
+          <div class="step-body">
+            <div class="step-label">Pull this week and generate</div>
+            <div class="step-desc">Agent scans your tools, drafts a summary, generates 6 tailored updates in 60 seconds.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Empty pull state (shown after step 2 done) -->
+      <div class="empty-box" id="pull-empty" style="display:none">
         <div class="empty-glyph">⚡</div>
         <div class="empty-h">Ready to pull your week</div>
-        <div class="empty-p">Connect GitHub, Jira, Slack, Notion or Linear on the left — then let the agent scan what happened.</div>
-        <button class="pull-btn" id="pull-btn" onclick="pullData()" disabled>
+        <div class="empty-p">The agent will scan your connected tools and find everything that happened in the last 7 days.</div>
+        <button class="pull-btn" id="pull-btn" onclick="pullData()">
           <div class="sp" id="pull-spinner"></div>
           <svg id="pull-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
           Pull this week's activity

@@ -212,6 +212,7 @@ window.CascadeTools = (() => {
     _connected.add(toolId);
     saveConnected();
     renderTools();
+    if (typeof updateOnboarding === 'function') updateOnboarding();
     showToast(`✓ ${TOOLS.find(t=>t.id===toolId)?.name} connected`);
   }
 
@@ -220,6 +221,7 @@ window.CascadeTools = (() => {
     delete _pulledData[toolId];
     saveConnected();
     renderTools();
+    if (typeof updateOnboarding === 'function') updateOnboarding();
     showToast(`${TOOLS.find(t=>t.id===toolId)?.name} disconnected`);
   }
 
