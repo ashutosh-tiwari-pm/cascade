@@ -76,7 +76,7 @@ async function init() {
   const dotEl = document.getElementById('api-dot');
   if (dotEl) dotEl.classList.toggle('on', isRealKey);
   const stEl = document.getElementById('api-status-txt');
-  if (stEl) { stEl.textContent = isRealKey ? '● Set' : '● Not set'; stEl.style.color = isRealKey ? 'var(--green)' : 'var(--t3)'; }
+  if (stEl) { stEl.textContent = isRealKey ? 'Set' : 'Not set'; stEl.style.color = isRealKey ? 'var(--green)' : 'var(--t3)'; }
 
   // Render tools
   CascadeTools.renderTools();
@@ -112,7 +112,7 @@ async function initDemoMode() {
   const dot = document.getElementById('api-dot');
   if (dot) dot.classList.add('on');
   const stEl2 = document.getElementById('api-status-txt');
-  if (stEl2) { stEl2.textContent = '● Set'; stEl2.style.color = 'var(--green)'; }
+  if (stEl2) { stEl2.textContent = 'Set'; stEl2.style.color = 'var(--green)'; }
 
   // Hide onboarding, go straight to pre-pulled state
   const onboard = document.getElementById('onboard-steps');
@@ -166,7 +166,7 @@ function updateOnboarding() {
   if (dot) { dot.classList.toggle('on', hasKey); }
   const statusTxt = document.getElementById('api-status-txt');
   if (statusTxt) {
-    statusTxt.textContent = hasKey ? '● Set' : '● Not set';
+    statusTxt.textContent = hasKey ? 'Set' : 'Not set';
     statusTxt.style.color = hasKey ? 'var(--green)' : 'var(--t3)';
   }
 
@@ -243,7 +243,7 @@ function saveApiKey() {
   const dot = document.getElementById('api-dot');
   if (dot) dot.classList.add('on');
   const statusTxt = document.getElementById('api-status-txt');
-  if (statusTxt) { statusTxt.textContent = '● Set'; statusTxt.style.color = 'var(--green)'; }
+  if (statusTxt) { statusTxt.textContent = 'Set'; statusTxt.style.color = 'var(--green)'; }
   CascadeTools.showToast('✓ API key saved');
   updateOnboarding();
 }
