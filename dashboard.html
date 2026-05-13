@@ -32,14 +32,28 @@ body{font-family:'Satoshi',sans-serif;color:var(--t1);min-height:100vh;display:f
 .topbar-btn:hover{color:var(--t1);border-color:var(--b3)}
 
 /* ── LAYOUT ── */
-.workspace{flex:1;display:grid;grid-template-columns:260px 1fr 320px;height:calc(100vh - 56px);overflow:hidden}
+.workspace{flex:1;display:flex;flex-direction:row;height:calc(100vh - 56px);overflow:hidden;user-select:none}
+.col{display:flex;flex-direction:column;overflow:hidden;min-width:180px;position:relative}
+.col-l{width:260px;flex-shrink:0}
+.col-c{flex:1;min-width:320px}
+.col-r{width:320px;flex-shrink:0}
+
+/* ── RESIZER ── */
+.resizer{width:4px;background:transparent;cursor:col-resize;position:relative;flex-shrink:0;z-index:10;transition:background .15s}
+.resizer::after{content:'';position:absolute;inset:0;width:1px;left:1.5px;background:var(--b1);transition:background .15s}
+.resizer:hover::after,.resizer.dragging::after{background:var(--blue);width:2px;left:1px}
+.resizer:hover,.resizer.dragging{background:rgba(94,114,255,0.06)}
+
+/* resize handle dots */
+.resizer::before{content:'⋮';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:var(--t3);font-size:14px;opacity:0;transition:opacity .15s;pointer-events:none;letter-spacing:-2px}
+.resizer:hover::before,.resizer.dragging::before{opacity:1}
 
 /* ── PANEL SHARED ── */
 .panel{overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--b2) transparent}
 .panel::-webkit-scrollbar{width:4px}.panel::-webkit-scrollbar-thumb{background:var(--b2);border-radius:99px}
 
 /* ── LEFT SIDEBAR ── */
-.sidebar-l{border-right:1px solid var(--b1);padding:20px 16px;display:flex;flex-direction:column;gap:12px}
+.sidebar-l{padding:20px 16px;display:flex;flex-direction:column;gap:12px;overflow-y:auto;flex:1}
 .sl-section{margin-bottom:4px}
 .sl-label{font-size:.6875rem;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.1em;padding:0 6px;margin-bottom:8px}
 
@@ -70,7 +84,7 @@ body{font-family:'Satoshi',sans-serif;color:var(--t1);min-height:100vh;display:f
 .tbtn-x{background:var(--red-a);color:var(--red);border:1px solid rgba(255,79,112,.2)}.tbtn-x:hover{background:rgba(255,79,112,.15)}
 
 /* ── CENTER ── */
-.center-panel{display:flex;flex-direction:column;border-right:1px solid var(--b1)}
+.center-panel{display:flex;flex-direction:column;flex:1;overflow:hidden}
 
 /* Agent hero */
 .agent-hero{padding:28px 28px 24px;border-bottom:1px solid var(--b1);background:linear-gradient(180deg,var(--s1) 0%,var(--bg) 100%);flex-shrink:0}
@@ -217,8 +231,8 @@ body{font-family:'Satoshi',sans-serif;color:var(--t1);min-height:100vh;display:f
 .modal-ok{flex:1;padding:11px;background:var(--blue);border:none;border-radius:9px;color:#fff;font-family:'Satoshi',sans-serif;font-size:.9375rem;font-weight:700;cursor:pointer;transition:background .15s}
 .modal-ok:hover{background:var(--blue2)}
 
-@media(max-width:1100px){.workspace{grid-template-columns:240px 1fr}.sidebar-r{display:none}}
-@media(max-width:720px){.workspace{grid-template-columns:1fr}.sidebar-l{display:none}}
+@media(max-width:1100px){.col-r{display:none}.resizer:last-child{display:none}}
+@media(max-width:720px){.col-l{display:none}.resizer:first-child{display:none}}
 </style>
 </head>
 <body>
@@ -243,10 +257,11 @@ body{font-family:'Satoshi',sans-serif;color:var(--t1);min-height:100vh;display:f
 </div>
 
 <!-- WORKSPACE -->
-<div class="workspace">
+<div class="workspace" id="workspace">
 
   <!-- LEFT -->
-  <div class="sidebar-l panel">
+  <div class="col col-l" id="col-l">
+  <div class="sidebar-l">
     <div class="sl-section">
       <div class="sl-label">API Key</div>
       <div class="api-card">
@@ -272,8 +287,12 @@ body{font-family:'Satoshi',sans-serif;color:var(--t1);min-height:100vh;display:f
       </div>
     </div>
   </div>
+  </div><!-- /col-l -->
+
+  <div class="resizer" id="resizer-l" title="Drag to resize"></div>
 
   <!-- CENTER -->
+  <div class="col col-c" id="col-c">
   <div class="center-panel">
     <div class="agent-hero">
       <div class="agent-eyebrow">Weekly Update Agent</div>
@@ -359,9 +378,13 @@ body{font-family:'Satoshi',sans-serif;color:var(--t1);min-height:100vh;display:f
       </div>
     </div>
   </div>
+  </div><!-- /col-c -->
+
+  <div class="resizer" id="resizer-r" title="Drag to resize"></div>
 
   <!-- RIGHT -->
-  <div class="sidebar-r panel">
+  <div class="col col-r" id="col-r">
+  <div class="sidebar-r panel" style="height:100%;overflow-y:auto">
     <div class="out-placeholder" id="out-placeholder">
       <div class="out-placeholder-glyph">✦</div>
       <div class="out-placeholder-txt">Your 6 stakeholder updates will appear here — ready to copy and send.</div>
@@ -395,6 +418,7 @@ body{font-family:'Satoshi',sans-serif;color:var(--t1);min-height:100vh;display:f
       </div>
     </div>
   </div>
+  </div><!-- /col-r -->
 
 </div>
 
@@ -402,5 +426,105 @@ body{font-family:'Satoshi',sans-serif;color:var(--t1);min-height:100vh;display:f
 <script src="js/supabase-client.js"></script>
 <script src="js/tools.js"></script>
 <script src="js/agent.js"></script>
+
+<script>
+(function() {
+  const STORAGE_KEY = 'cascade_col_widths';
+  const MIN = 180;
+
+  function saveSizes() {
+    const l = document.getElementById('col-l');
+    const r = document.getElementById('col-r');
+    if (!l || !r) return;
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({
+      l: l.style.width,
+      r: r.style.width,
+    }));
+  }
+
+  function loadSizes() {
+    try {
+      const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+      const l = document.getElementById('col-l');
+      const r = document.getElementById('col-r');
+      if (saved.l && l) l.style.width = saved.l;
+      if (saved.r && r) r.style.width = saved.r;
+    } catch(e) {}
+  }
+
+  function makeResizable(resizerId, leftColId, rightColId, resizeLeft) {
+    const resizer = document.getElementById(resizerId);
+    if (!resizer) return;
+
+    resizer.addEventListener('mousedown', function(e) {
+      e.preventDefault();
+      const startX = e.clientX;
+      const leftCol = document.getElementById(leftColId);
+      const rightCol = document.getElementById(rightColId);
+      const workspace = document.getElementById('workspace');
+      if (!leftCol || !workspace) return;
+
+      const startLeftW = leftCol.getBoundingClientRect().width;
+      const startRightW = rightCol ? rightCol.getBoundingClientRect().width : 0;
+      const totalW = workspace.getBoundingClientRect().width;
+
+      resizer.classList.add('dragging');
+      document.body.style.cursor = 'col-resize';
+      document.body.style.userSelect = 'none';
+
+      function onMove(e) {
+        const dx = e.clientX - startX;
+
+        if (resizeLeft) {
+          // Left resizer: changes left col width
+          const newW = Math.max(MIN, Math.min(startLeftW + dx, totalW - MIN * 2));
+          leftCol.style.width = newW + 'px';
+          leftCol.style.flex = '0 0 ' + newW + 'px';
+        } else {
+          // Right resizer: changes right col width (dragging left = wider right)
+          const newW = Math.max(MIN, Math.min(startRightW - dx, totalW - MIN * 2));
+          if (rightCol) {
+            rightCol.style.width = newW + 'px';
+            rightCol.style.flex = '0 0 ' + newW + 'px';
+          }
+        }
+      }
+
+      function onUp() {
+        resizer.classList.remove('dragging');
+        document.body.style.cursor = '';
+        document.body.style.userSelect = '';
+        document.removeEventListener('mousemove', onMove);
+        document.removeEventListener('mouseup', onUp);
+        saveSizes();
+      }
+
+      document.addEventListener('mousemove', onMove);
+      document.addEventListener('mouseup', onUp);
+    });
+
+    // Double-click to reset
+    resizer.addEventListener('dblclick', function() {
+      const leftCol = document.getElementById(leftColId);
+      const rightCol = document.getElementById(rightColId);
+      if (resizeLeft) {
+        if (leftCol) { leftCol.style.width = '260px'; leftCol.style.flex = '0 0 260px'; }
+      } else {
+        if (rightCol) { rightCol.style.width = '320px'; rightCol.style.flex = '0 0 320px'; }
+      }
+      saveSizes();
+      CascadeTools?.showToast('↺ Column reset to default');
+    });
+  }
+
+  // Init
+  document.addEventListener('DOMContentLoaded', function() {
+    loadSizes();
+    makeResizable('resizer-l', 'col-l', 'col-c', true);
+    makeResizable('resizer-r', 'col-c', 'col-r', false);
+  });
+})();
+</script>
+
 </body>
 </html>
