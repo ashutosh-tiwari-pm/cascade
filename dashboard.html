@@ -47,10 +47,10 @@ body{font-family:'Satoshi',sans-serif;background:var(--bg);color:var(--t1);min-h
 .signout-btn:hover{color:var(--t1);border-color:var(--border2)}
 
 /* ── LAYOUT ── */
-.layout{display:flex;flex:1;height:calc(100vh - 54px);overflow:hidden}
+.layout{display:flex;flex:1;height:calc(100vh - 54px);overflow:hidden;align-items:stretch}
 
 /* ── LEFT SIDEBAR ── */
-.sidebar{width:240px;flex-shrink:0;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow-y:auto}
+.sidebar{width:240px;flex-shrink:0;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow-y:auto;height:100%;position:sticky;top:0;align-self:flex-start;max-height:calc(100vh - 54px)}
 .sb-section{padding:16px 14px 8px}
 .sb-label{font-size:.625rem;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px;padding:0 4px}
 
@@ -300,7 +300,7 @@ body{font-family:'Satoshi',sans-serif;background:var(--bg);color:var(--t1);min-h
   </div>
 
   <!-- MAIN -->
-  <div class="main">
+  <div class="main" style="flex:1;overflow-y:auto;height:100%">
 
     <!-- Header -->
     <div class="page-header">

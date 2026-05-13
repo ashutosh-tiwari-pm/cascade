@@ -71,6 +71,11 @@ async function init() {
   const key = localStorage.getItem('cascade_api_key') || '';
   const keyInput = document.getElementById('api-key-input');
   if (keyInput && key) keyInput.value = '••••••••••••••••';
+  // Set status immediately on load
+  const dotEl = document.getElementById('api-dot');
+  if (dotEl) dotEl.classList.toggle('on', !!key);
+  const stEl = document.getElementById('api-status-txt');
+  if (stEl) { stEl.textContent = key ? '● Set' : '● Not set'; stEl.style.color = key ? 'var(--green)' : 'var(--t3)'; }
 
   // Render tools
   CascadeTools.renderTools();
@@ -104,7 +109,9 @@ async function initDemoMode() {
 
   // Mark API key dot as live
   const dot = document.getElementById('api-dot');
-  if (dot) dot.classList.add('live');
+  if (dot) dot.classList.add('on');
+  const stEl2 = document.getElementById('api-status-txt');
+  if (stEl2) { stEl2.textContent = '● Set'; stEl2.style.color = 'var(--green)'; }
 
   // Hide onboarding, go straight to pre-pulled state
   const onboard = document.getElementById('onboard-steps');
@@ -154,7 +161,12 @@ function updateOnboarding() {
   const dot = document.getElementById('api-dot');
 
   // API dot
-  if (dot) { if (hasKey) dot.classList.add('live'); else dot.classList.remove('live'); }
+  if (dot) { dot.classList.toggle('on', hasKey); }
+  const statusTxt = document.getElementById('api-status-txt');
+  if (statusTxt) {
+    statusTxt.textContent = hasKey ? '● Set' : '● Not set';
+    statusTxt.style.color = hasKey ? 'var(--green)' : 'var(--t3)';
+  }
 
   if (!hasKey) {
     // Step 1 active
@@ -225,8 +237,13 @@ function saveApiKey() {
   if (!val || val.includes('•')) return;
   localStorage.setItem('cascade_api_key', val);
   document.getElementById('api-key-input').value = '••••••••••••••••';
+  // Update dot immediately without waiting for updateOnboarding
+  const dot = document.getElementById('api-dot');
+  if (dot) dot.classList.add('on');
+  const statusTxt = document.getElementById('api-status-txt');
+  if (statusTxt) { statusTxt.textContent = '● Set'; statusTxt.style.color = 'var(--green)'; }
   CascadeTools.showToast('✓ API key saved');
-  updateOnboarding(); // progress onboarding
+  updateOnboarding();
 }
 
 function updateApiKeyStatus() {
