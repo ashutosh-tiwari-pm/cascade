@@ -140,30 +140,34 @@ window.CascadeTools = (() => {
   // ── RENDER TOOL LIST ──
   function renderTools() {
     const container = document.getElementById('tools-list');
-    const countEl = document.getElementById('connected-count');
+    const badgeEl = document.getElementById('connected-badge');
     if (!container) return;
 
     container.innerHTML = TOOLS.map(t => {
       const isConnected = _connected.has(t.id);
       return `
-        <div class="tool-item">
-          <div class="tool-icon" style="background:${t.bg}">${t.icon}</div>
-          <div class="tool-info">
+        <div class="tool-row">
+          <div class="tool-emoji" style="background:${t.bg}">${t.icon}</div>
+          <div class="tool-text">
             <div class="tool-name">${t.name}</div>
-            <div class="tool-status">${isConnected ? '✓ Connected · '+t.description : t.description}</div>
+            <div class="tool-desc">${isConnected ? '✓ Connected · '+t.description : t.description}</div>
           </div>
-          ${isConnected
-            ? `<button class="tool-btn disconnect" onclick="CascadeTools.disconnect('${t.id}')">Disconnect</button>`
-            : `<button class="tool-btn connect" onclick="CascadeTools.connect('${t.id}')">Connect</button>`
-          }
+          <div class="tool-action">
+            ${isConnected
+              ? `<button class="tbtn tbtn-disconnect" onclick="CascadeTools.disconnect('${t.id}')">Disconnect</button>`
+              : `<button class="tbtn tbtn-connect" onclick="CascadeTools.connect('${t.id}')">Connect</button>`
+            }
+          </div>
         </div>`;
     }).join('');
 
     const count = _connected.size;
-    countEl.textContent = count + ' connected';
-    countEl.style.color = count > 0 ? 'var(--green)' : 'var(--t3)';
-
-    // Enable pull button if at least one tool connected
+    if (badgeEl) {
+      badgeEl.textContent = count + ' connected';
+      badgeEl.style.background = count > 0 ? 'var(--green-faint)' : 'var(--ink3)';
+      badgeEl.style.color = count > 0 ? 'var(--green)' : 'var(--t3)';
+      badgeEl.style.borderColor = count > 0 ? 'rgba(0,229,160,.2)' : 'var(--border)';
+    }
     const pullBtn = document.getElementById('pull-btn');
     if (pullBtn) pullBtn.disabled = count === 0;
   }
@@ -184,7 +188,7 @@ window.CascadeTools = (() => {
 
     const modal = document.createElement('div');
     modal.id = 'connect-modal';
-    modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:999;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(8px)';
+    modal.className = 'modal-overlay';
     modal.innerHTML = `
       <div style="background:var(--ink2);border:1px solid var(--border2);border-radius:16px;padding:28px;width:100%;max-width:420px;margin:20px">
         <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">

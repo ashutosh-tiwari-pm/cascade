@@ -23,7 +23,10 @@ async function init() {
 
   // Show user
   const emailEl = document.getElementById('user-email-display');
-  if (emailEl) emailEl.textContent = session.user.email.split('@')[0];
+  const name = session.user.email.split('@')[0];
+  if (emailEl) emailEl.textContent = name;
+  const avatarEl = document.getElementById('user-avatar');
+  if (avatarEl) avatarEl.textContent = name[0].toUpperCase();
 
   // Load API key
   const key = localStorage.getItem('cascade_api_key') || '';
@@ -50,15 +53,10 @@ function saveApiKey() {
 
 function updateApiKeyStatus() {
   const key = localStorage.getItem('cascade_api_key');
-  const el = document.getElementById('api-key-status');
-  if (!el) return;
-  if (key) {
-    el.textContent = '✓ Set';
-    el.style.color = 'var(--green)';
-  } else {
-    el.textContent = 'Not set';
-    el.style.color = 'var(--t3)';
-  }
+  const dot = document.getElementById('api-dot');
+  if (!dot) return;
+  if (key) dot.classList.add('set');
+  else dot.classList.remove('set');
 }
 
 // ── PULL DATA ──
@@ -219,23 +217,20 @@ function renderOutputs() {
   const panel = document.getElementById('outputs-panel');
   panel.classList.add('show');
 
-  // Render tabs
   const tabs = document.getElementById('outputs-tabs');
   tabs.innerHTML = OUTPUT_TYPES.map((t, i) => `
-    <button class="output-tab ${i===0?'active':''}" onclick="switchOutputTab(${i},this)">
-      ${t.emoji} ${t.label}
+    <button class="out-tab ${i===0?'active':''}" onclick="switchOutputTab(${i},this)">
+      <span class="out-tab-emoji">${t.emoji}</span>
+      ${t.label}
     </button>`).join('');
 
-  // Show first tab
   showOutput(0);
-
-  // Scroll to outputs
   panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 function switchOutputTab(idx, btn) {
   _currentTab = idx;
-  document.querySelectorAll('.output-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.out-tab').forEach(t => t.classList.remove('active'));
   btn.classList.add('active');
   showOutput(idx);
 }
@@ -300,16 +295,16 @@ async function loadHistory() {
     if (!el) return;
 
     if (!data || data.length === 0) {
-      el.innerHTML = '<div style="text-align:center;padding:20px;color:var(--t3);font-size:.8125rem">No updates yet</div>';
+      el.innerHTML = '<div class="history-empty">No updates yet</div>';
       return;
     }
 
     el.innerHTML = data.map(u => `
-      <div class="history-item" onclick="loadHistoryItem('${u.id}')">
-        <div class="history-date">${new Date(u.created_at).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})}</div>
-        <div class="history-preview">${(u.outputs?.executive || 'Update generated').slice(0,80)}...</div>
-        <div class="history-tools">
-          ${(u.tools_used||[]).map(t => `<span class="history-tool-pill">${t}</span>`).join('')}
+      <div class="hist-item" onclick="loadHistoryItem('${u.id}')">
+        <div class="hist-date">${new Date(u.created_at).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})}</div>
+        <div class="hist-preview">${(u.outputs?.executive || 'Update generated').slice(0,80)}...</div>
+        <div class="hist-pills">
+          ${(u.tools_used||[]).map(t => `<span class="hist-pill">${t}</span>`).join('')}
         </div>
       </div>`).join('');
   } catch(e) { console.warn('History load failed:', e.message); }

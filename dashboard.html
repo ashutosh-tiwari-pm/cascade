@@ -5,262 +5,318 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Dashboard — Cascade</title>
 <link rel="preconnect" href="https://api.fontshare.com">
-<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@700,600,500,400&f[]=clash-display@700,600&display=swap">
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@900,700,600,500,400&f[]=clash-display@700,600&display=swap">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{font-size:16px;-webkit-font-smoothing:antialiased}
 :root{
-  --ink:#0A0A0F;--ink2:#12121A;--ink3:#1A1A26;
-  --border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.12);
-  --blue:#4F6EF7;--blue-dim:#3D5AE5;--blue-faint:rgba(79,110,247,0.1);
-  --cyan:#00D4FF;--violet:#8B5CF6;--amber:#F59E0B;
-  --green:#10B981;--green-faint:rgba(16,185,129,0.08);
-  --red:#EF4444;--red-faint:rgba(239,68,68,0.08);
-  --t1:#F0F4FF;--t2:#8892B0;--t3:#4A5568;
+  --ink:#07070E;--ink2:#0E0E1A;--ink3:#141424;--ink4:#1C1C2E;
+  --border:rgba(255,255,255,0.05);--border2:rgba(255,255,255,0.10);--border3:rgba(255,255,255,0.18);
+  --blue:#5B7BFF;--blue-dim:#4A68EE;--blue-faint:rgba(91,123,255,0.10);--blue-glow:rgba(91,123,255,0.25);
+  --cyan:#00D4FF;--violet:#9B6DFF;--amber:#FFAA00;
+  --green:#00E5A0;--green-faint:rgba(0,229,160,0.08);--green-glow:rgba(0,229,160,0.2);
+  --red:#FF5270;--red-faint:rgba(255,82,112,0.08);
+  --t1:#EEEEFF;--t2:#8890B8;--t3:#4A5280;
   --fd:'Clash Display',sans-serif;--fb:'Satoshi',sans-serif;
+  --r1:16px;--r2:12px;
 }
 body{font-family:var(--fb);background:var(--ink);color:var(--t1);min-height:100vh}
 a{text-decoration:none;color:var(--blue)}
 
-/* NAV */
-.nav{background:rgba(10,10,15,.95);border-bottom:1px solid var(--border);padding:13px 0;position:sticky;top:0;z-index:100;backdrop-filter:blur(12px)}
-.nav-inner{max-width:1200px;margin:0 auto;padding:0 28px;display:flex;align-items:center;justify-content:space-between}
-.logo{display:flex;align-items:center;gap:8px;font-family:var(--fd);font-weight:700;font-size:1.1rem;color:var(--t1);letter-spacing:-.03em}
-.logo-mark{width:28px;height:28px;background:linear-gradient(135deg,var(--blue),var(--cyan));border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+/* ── NAV ── */
+.nav{background:rgba(7,7,14,.92);border-bottom:1px solid var(--border);padding:0;position:sticky;top:0;z-index:100;backdrop-filter:blur(20px)}
+.nav-inner{max-width:1360px;margin:0 auto;padding:0 36px;height:62px;display:flex;align-items:center;justify-content:space-between}
+.logo{display:flex;align-items:center;gap:10px;font-family:var(--fd);font-weight:700;font-size:1.25rem;color:var(--t1);letter-spacing:-.04em}
+.logo-mark{width:34px;height:34px;background:linear-gradient(135deg,var(--blue),var(--cyan));border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 0 20px var(--blue-glow)}
+.nav-center{display:flex;align-items:center;gap:4px;background:var(--ink2);border:1px solid var(--border2);border-radius:10px;padding:4px}
+.nav-tab{padding:7px 18px;border-radius:7px;font-size:.875rem;font-weight:500;color:var(--t3);cursor:pointer;transition:all .15s;border:none;background:none;font-family:var(--fb)}
+.nav-tab.active{background:var(--ink4);color:var(--t1);box-shadow:0 1px 8px rgba(0,0,0,.3)}
 .nav-right{display:flex;align-items:center;gap:10px}
-.user-chip{display:flex;align-items:center;gap:8px;padding:6px 12px;background:var(--ink2);border:1px solid var(--border2);border-radius:99px;font-size:.8125rem;color:var(--t2)}
-.btn{display:inline-flex;align-items:center;gap:5px;padding:8px 16px;font-family:var(--fb);font-size:.8125rem;font-weight:600;border-radius:7px;border:none;cursor:pointer;transition:all .15s}
-.btn-ghost{background:transparent;color:var(--t2);border:1px solid var(--border2)}.btn-ghost:hover{color:var(--t1)}
-.btn-blue{background:var(--blue);color:#fff}.btn-blue:hover{background:var(--blue-dim)}
+.user-pill{display:flex;align-items:center;gap:8px;padding:7px 14px;background:var(--ink2);border:1px solid var(--border2);border-radius:99px}
+.user-avatar{width:22px;height:22px;border-radius:50%;background:linear-gradient(135deg,var(--blue),var(--violet));display:flex;align-items:center;justify-content:center;font-size:.625rem;font-weight:700;color:#fff;flex-shrink:0}
+.user-name{font-size:.8125rem;font-weight:500;color:var(--t2)}
+.btn-signout{padding:7px 16px;background:transparent;border:1px solid var(--border2);border-radius:8px;font-family:var(--fb);font-size:.8125rem;font-weight:600;color:var(--t3);cursor:pointer;transition:all .15s}
+.btn-signout:hover{color:var(--t1);border-color:var(--border3)}
 
-/* LAYOUT */
-.page{max-width:1200px;margin:0 auto;padding:32px 28px;display:grid;grid-template-columns:300px 1fr;gap:24px;align-items:start}
+/* ── PAGE ── */
+.page{max-width:1360px;margin:0 auto;padding:28px 36px;display:grid;grid-template-columns:310px 1fr;gap:22px;align-items:start}
 
-/* SIDEBAR */
-.sidebar{position:sticky;top:72px;display:flex;flex-direction:column;gap:16px}
+/* ── SIDEBAR ── */
+.sidebar{position:sticky;top:70px;display:flex;flex-direction:column;gap:14px}
 
-/* TOOLS PANEL */
-.panel{background:var(--ink2);border:1px solid var(--border2);border-radius:14px;overflow:hidden}
-.panel-header{padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
-.panel-title{font-family:var(--fd);font-weight:700;font-size:.9375rem;color:var(--t1);letter-spacing:-.02em}
-.panel-body{padding:12px}
+/* ── GLASS CARD ── */
+.card{background:var(--ink2);border:1px solid var(--border2);border-radius:var(--r1);overflow:hidden;transition:border-color .2s}
+.card-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px}
+.card-title{font-family:var(--fd);font-weight:700;font-size:1rem;color:var(--t1);letter-spacing:-.03em}
+.card-body{padding:16px}
 
-.tool-item{display:flex;align-items:center;gap:10px;padding:10px 11px;border-radius:9px;transition:background .15s;margin-bottom:4px}
-.tool-item:last-child{margin-bottom:0}
-.tool-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0}
-.tool-info{flex:1;min-width:0}
-.tool-name{font-size:.8125rem;font-weight:600;color:var(--t1)}
-.tool-status{font-size:.625rem;color:var(--t3);margin-top:1px}
-.tool-btn{font-size:.625rem;font-weight:700;padding:3px 9px;border-radius:5px;border:none;cursor:pointer;font-family:var(--fb);white-space:nowrap;transition:all .15s}
-.tool-btn.connect{background:var(--blue-faint);color:var(--blue);border:1px solid rgba(79,110,247,.2)}.tool-btn.connect:hover{background:rgba(79,110,247,.2)}
-.tool-btn.connected{background:var(--green-faint);color:var(--green);border:1px solid rgba(16,185,129,.2);cursor:default}
-.tool-btn.disconnect{background:var(--red-faint);color:var(--red);border:1px solid rgba(239,68,68,.2)}.tool-btn.disconnect:hover{background:rgba(239,68,68,.15)}
-.tool-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+/* ── API KEY CARD ── */
+.api-status-dot{width:8px;height:8px;border-radius:50%;background:var(--t3);flex-shrink:0;transition:background .2s}
+.api-status-dot.set{background:var(--green);box-shadow:0 0 8px var(--green-glow)}
+.api-hint{font-size:.8125rem;color:var(--t2);line-height:1.55;margin-bottom:12px}
+.api-input-wrap{display:flex;gap:6px}
+.api-input{flex:1;padding:10px 13px;background:var(--ink3);border:1px solid var(--border2);border-radius:9px;font-family:monospace;font-size:.8125rem;color:var(--t1);outline:none;transition:border-color .15s}
+.api-input:focus{border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-faint)}
+.api-input::placeholder{color:var(--t3)}
+.api-save-btn{padding:10px 18px;background:var(--blue);color:#fff;border:none;border-radius:9px;font-family:var(--fb);font-size:.875rem;font-weight:700;cursor:pointer;transition:background .15s;white-space:nowrap}
+.api-save-btn:hover{background:var(--blue-dim)}
+.api-footer{font-size:.6875rem;color:var(--t3);margin-top:8px}
+.api-footer a{color:var(--blue)}
 
-/* API KEY PANEL */
-.api-key-row{display:flex;gap:6px;margin-top:8px}
-.api-key-input{flex:1;padding:9px 11px;background:var(--ink);border:1px solid var(--border2);border-radius:7px;font-family:monospace;font-size:.75rem;color:var(--t1);outline:none;transition:border-color .15s}
-.api-key-input:focus{border-color:var(--blue)}
-.api-key-input::placeholder{color:var(--t3)}
-.api-key-save{padding:9px 14px;background:var(--blue);color:#fff;border:none;border-radius:7px;font-family:var(--fb);font-size:.75rem;font-weight:700;cursor:pointer;white-space:nowrap}
+/* ── TOOLS CARD ── */
+.connected-badge{font-size:.6875rem;font-weight:700;padding:3px 10px;border-radius:99px;background:var(--green-faint);color:var(--green);border:1px solid rgba(0,229,160,.2)}
+.tool-row{display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:10px;transition:background .15s;cursor:default}
+.tool-row:hover{background:var(--ink3)}
+.tool-emoji{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:1.125rem;flex-shrink:0}
+.tool-text{flex:1;min-width:0}
+.tool-name{font-size:.9375rem;font-weight:600;color:var(--t1);line-height:1}
+.tool-desc{font-size:.75rem;color:var(--t3);margin-top:2px}
+.tool-action{flex-shrink:0}
+.tbtn{font-size:.75rem;font-weight:700;padding:5px 13px;border-radius:7px;border:none;cursor:pointer;font-family:var(--fb);transition:all .15s;white-space:nowrap;letter-spacing:.01em}
+.tbtn-connect{background:var(--blue-faint);color:var(--blue);border:1px solid rgba(91,123,255,.25)}.tbtn-connect:hover{background:rgba(91,123,255,.18);border-color:rgba(91,123,255,.4)}
+.tbtn-connected{background:var(--green-faint);color:var(--green);border:1px solid rgba(0,229,160,.2);cursor:default}
+.tbtn-disconnect{background:var(--red-faint);color:var(--red);border:1px solid rgba(255,82,112,.2)}.tbtn-disconnect:hover{background:rgba(255,82,112,.15)}
 
-/* MAIN */
+/* ── HISTORY ── */
+.history-empty{text-align:center;padding:24px 12px;color:var(--t3);font-size:.875rem}
+.hist-item{padding:12px;background:var(--ink3);border:1px solid var(--border);border-radius:10px;margin-bottom:8px;cursor:pointer;transition:all .2s}
+.hist-item:hover{border-color:var(--blue);background:var(--ink4)}
+.hist-item:last-child{margin-bottom:0}
+.hist-date{font-size:.6875rem;color:var(--t3);margin-bottom:4px}
+.hist-preview{font-size:.8125rem;color:var(--t2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:6px}
+.hist-pills{display:flex;gap:4px;flex-wrap:wrap}
+.hist-pill{font-size:.5625rem;font-weight:700;padding:2px 7px;border-radius:4px;background:var(--blue-faint);color:var(--blue);letter-spacing:.03em}
+
+/* ── MAIN ── */
 .main{display:flex;flex-direction:column;gap:20px}
 
-/* AGENT PANEL */
-.agent-panel{background:var(--ink2);border:1px solid var(--border2);border-radius:14px;overflow:hidden}
-.agent-header{padding:18px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
-.agent-title{font-family:var(--fd);font-weight:700;font-size:1.0625rem;color:var(--t1);letter-spacing:-.02em}
-.agent-sub{font-size:.8125rem;color:var(--t3);margin-top:2px}
-.timeframe-select{padding:7px 12px;background:var(--ink3);border:1px solid var(--border2);border-radius:7px;color:var(--t2);font-family:var(--fb);font-size:.8125rem;outline:none;cursor:pointer}
+/* ── AGENT CARD ── */
+.agent-card{background:var(--ink2);border:1px solid var(--border2);border-radius:var(--r1);overflow:hidden}
+.agent-top{padding:24px 28px 20px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;justify-content:space-between;gap:16px;background:linear-gradient(135deg,var(--ink2) 0%,var(--ink3) 100%)}
+.agent-label{font-size:.6875rem;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.agent-label::before{content:'';width:18px;height:2px;background:var(--blue);border-radius:99px}
+.agent-title{font-family:var(--fd);font-weight:700;font-size:1.625rem;letter-spacing:-.04em;color:var(--t1);line-height:1.15;margin-bottom:5px}
+.agent-sub{font-size:.9375rem;color:var(--t2);line-height:1.5}
+.agent-meta{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.timeframe-sel{padding:9px 14px;background:var(--ink4);border:1px solid var(--border2);border-radius:9px;color:var(--t1);font-family:var(--fb);font-size:.875rem;font-weight:500;outline:none;cursor:pointer;transition:border-color .15s}
+.timeframe-sel:focus{border-color:var(--blue)}
+.agent-body{padding:24px 28px}
 
-.agent-body{padding:20px}
+/* ── EMPTY STATE ── */
+.empty-state{text-align:center;padding:52px 32px;border:1.5px dashed var(--border2);border-radius:14px;background:linear-gradient(135deg,var(--ink3) 0%,var(--ink4) 100%)}
+.empty-icon{width:72px;height:72px;background:linear-gradient(135deg,var(--blue-faint),rgba(155,109,255,.1));border:1px solid rgba(91,123,255,.2);border-radius:20px;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:2rem}
+.empty-title{font-family:var(--fd);font-weight:700;font-size:1.375rem;letter-spacing:-.03em;color:var(--t1);margin-bottom:8px}
+.empty-sub{font-size:.9375rem;color:var(--t2);line-height:1.6;max-width:380px;margin:0 auto 24px}
+.pull-btn{display:inline-flex;align-items:center;gap:9px;padding:13px 28px;background:linear-gradient(135deg,var(--blue),var(--violet));color:#fff;border:none;border-radius:11px;font-family:var(--fb);font-size:1rem;font-weight:700;cursor:pointer;transition:all .2s;box-shadow:0 0 28px var(--blue-glow);letter-spacing:-.01em}
+.pull-btn:hover{transform:translateY(-2px);box-shadow:0 0 40px var(--blue-glow)}
+.pull-btn:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none}
 
-/* Pull results */
-.pull-empty{text-align:center;padding:40px 20px;border:1px dashed var(--border2);border-radius:10px}
-.pull-empty-icon{font-size:2.5rem;margin-bottom:12px}
-.pull-empty-title{font-family:var(--fd);font-weight:700;font-size:1rem;color:var(--t1);margin-bottom:6px;letter-spacing:-.02em}
-.pull-empty-sub{font-size:.8125rem;color:var(--t2);line-height:1.6;max-width:320px;margin:0 auto}
-.pull-btn{display:inline-flex;align-items:center;gap:7px;padding:11px 22px;background:var(--blue);color:#fff;border:none;border-radius:9px;font-family:var(--fb);font-size:.875rem;font-weight:700;cursor:pointer;transition:all .15s;margin-top:16px}
-.pull-btn:hover{background:var(--blue-dim)}
-.pull-btn:disabled{opacity:.4;cursor:not-allowed}
-
-/* Pulled data display */
+/* ── PULLED DATA ── */
 .pulled-data{display:none}
-.pulled-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
-.pulled-title{font-size:.6875rem;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.1em}
-.pulled-meta{font-size:.6875rem;color:var(--t3)}
-.tool-section{margin-bottom:12px;background:var(--ink3);border:1px solid var(--border);border-radius:10px;overflow:hidden}
-.tool-section-header{padding:10px 14px;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--border)}
-.tool-section-icon{font-size:.875rem}
-.tool-section-name{font-size:.75rem;font-weight:700;color:var(--t1)}
-.tool-section-count{font-size:.625rem;color:var(--t3);margin-left:auto}
-.tool-section-items{padding:8px 14px 10px}
-.tool-item-row{font-size:.75rem;color:var(--t2);padding:3px 0;display:flex;align-items:flex-start;gap:6px;line-height:1.4}
-.tool-item-bullet{color:var(--blue);flex-shrink:0;margin-top:2px}
+.pulled-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.pulled-heading{font-family:var(--fd);font-weight:700;font-size:1.125rem;letter-spacing:-.03em;color:var(--t1)}
+.pulled-time{font-size:.75rem;color:var(--t3)}
+.tool-section{background:var(--ink3);border:1px solid var(--border2);border-radius:12px;overflow:hidden;margin-bottom:10px}
+.tool-section:last-child{margin-bottom:0}
+.tool-sec-header{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.tool-sec-icon{font-size:1.0625rem}
+.tool-sec-name{font-size:.9375rem;font-weight:700;color:var(--t1);letter-spacing:-.02em}
+.tool-sec-summary{font-size:.75rem;color:var(--t3);margin-left:auto}
+.tool-sec-items{padding:12px 16px;display:flex;flex-direction:column;gap:6px}
+.tool-sec-item{display:flex;align-items:flex-start;gap:8px;font-size:.875rem;color:var(--t2);line-height:1.5}
+.tool-sec-bullet{color:var(--blue);font-weight:700;flex-shrink:0;margin-top:1px}
 
-/* Context input */
-.context-label{font-size:.6875rem;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.08em;margin:14px 0 7px}
-.context-input{width:100%;padding:12px 14px;background:var(--ink3);border:1px solid var(--border2);border-radius:9px;font-family:var(--fb);font-size:.875rem;color:var(--t1);outline:none;transition:border-color .15s;resize:vertical;min-height:80px;line-height:1.6}
-.context-input:focus{border-color:var(--blue)}
-.context-input::placeholder{color:var(--t3)}
+/* ── CONTEXT BOX ── */
+.ctx-label{font-size:.75rem;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.08em;margin:18px 0 8px}
+.ctx-input{width:100%;padding:14px 16px;background:var(--ink3);border:1px solid var(--border2);border-radius:11px;font-family:var(--fb);font-size:.9375rem;color:var(--t1);outline:none;transition:border-color .2s;resize:vertical;min-height:88px;line-height:1.6}
+.ctx-input:focus{border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-faint)}
+.ctx-input::placeholder{color:var(--t3)}
 
-/* Generate button */
-.generate-row{display:flex;align-items:center;justify-content:space-between;margin-top:16px;padding-top:16px;border-top:1px solid var(--border)}
-.generate-hint{font-size:.75rem;color:var(--t3)}
-.generate-btn{display:flex;align-items:center;gap:8px;padding:12px 24px;background:linear-gradient(135deg,var(--blue),var(--violet));color:#fff;border:none;border-radius:9px;font-family:var(--fb);font-size:.9375rem;font-weight:700;cursor:pointer;transition:all .2s;box-shadow:0 0 24px rgba(79,110,247,.3)}
-.generate-btn:hover{transform:translateY(-1px);box-shadow:0 0 36px rgba(79,110,247,.4)}
-.generate-btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+/* ── GENERATE BAR ── */
+.gen-bar{display:flex;align-items:center;justify-content:space-between;margin-top:18px;padding-top:18px;border-top:1px solid var(--border)}
+.gen-hint{font-size:.875rem;color:var(--t3)}
+.gen-btn{display:flex;align-items:center;gap:9px;padding:13px 28px;background:linear-gradient(135deg,var(--blue),var(--violet));color:#fff;border:none;border-radius:11px;font-family:var(--fb);font-size:1rem;font-weight:700;cursor:pointer;transition:all .2s;box-shadow:0 0 24px var(--blue-glow);letter-spacing:-.01em}
+.gen-btn:hover{transform:translateY(-1px);box-shadow:0 0 36px var(--blue-glow)}
+.gen-btn:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none}
 @keyframes spin{to{transform:rotate(360deg)}}
-.spinner{width:15px;height:15px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;display:none}
+.spinner{width:16px;height:16px;border:2.5px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;display:none}
 
-/* OUTPUTS */
-.outputs-panel{display:none}
-.outputs-panel.show{display:block}
-.outputs-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
-.outputs-title{font-family:var(--fd);font-weight:700;font-size:1.0625rem;color:var(--t1);letter-spacing:-.02em}
-.outputs-tabs{display:flex;gap:4px;background:var(--ink2);border:1px solid var(--border2);border-radius:10px;padding:4px;flex-wrap:wrap}
-.output-tab{padding:7px 14px;border-radius:7px;cursor:pointer;font-size:.8125rem;font-weight:500;color:var(--t3);transition:all .15s;border:none;background:none;font-family:var(--fb)}
-.output-tab.active{background:var(--ink3);color:var(--t1)}
-.output-content{background:var(--ink2);border:1px solid var(--border2);border-radius:14px;overflow:hidden}
-.output-content-header{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
-.output-audience-label{font-size:.625rem;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:.08em}
-.output-name{font-size:.9375rem;font-weight:600;color:var(--t1)}
-.copy-btn{display:flex;align-items:center;gap:5px;padding:6px 12px;background:var(--ink3);border:1px solid var(--border2);border-radius:6px;font-size:.75rem;font-weight:600;color:var(--t2);cursor:pointer;font-family:var(--fb);transition:all .15s}
-.copy-btn:hover{color:var(--t1);border-color:rgba(255,255,255,.2)}
-.output-body{padding:20px 22px;font-size:.9375rem;color:var(--t1);line-height:1.75;white-space:pre-wrap;min-height:180px;max-height:420px;overflow-y:auto}
-.output-tone-row{padding:12px 18px;border-top:1px solid var(--border);display:flex;align-items:center;gap:10px}
-.tone-label{font-size:.6875rem;color:var(--t3);font-weight:600;text-transform:uppercase;letter-spacing:.08em}
-.tone-btn{font-size:.6875rem;font-weight:600;padding:4px 10px;border-radius:5px;border:1px solid var(--border2);background:transparent;color:var(--t3);cursor:pointer;font-family:var(--fb);transition:all .15s}
-.tone-btn.active{background:var(--blue-faint);color:var(--blue);border-color:rgba(79,110,247,.3)}
-.tone-btn:hover:not(.active){color:var(--t2)}
+/* ── OUTPUTS ── */
+.outputs-card{display:none;background:var(--ink2);border:1px solid var(--border2);border-radius:var(--r1);overflow:hidden}
+.outputs-card.show{display:block}
+.outputs-top{padding:20px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:linear-gradient(135deg,var(--ink2),var(--ink3))}
+.outputs-heading{font-family:var(--fd);font-weight:700;font-size:1.25rem;letter-spacing:-.03em;color:var(--t1)}
+.outputs-heading em{font-style:normal;background:linear-gradient(90deg,var(--blue),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.copy-all-btn{display:flex;align-items:center;gap:6px;padding:8px 16px;background:var(--ink4);border:1px solid var(--border2);border-radius:8px;font-size:.8125rem;font-weight:600;color:var(--t2);cursor:pointer;font-family:var(--fb);transition:all .15s}
+.copy-all-btn:hover{color:var(--t1);border-color:var(--border3)}
 
-/* TOAST */
-.toast{position:fixed;bottom:20px;right:20px;background:var(--ink3);border:1px solid var(--border2);border-radius:9px;padding:11px 16px;font-size:.875rem;color:var(--t1);z-index:999;display:flex;align-items:center;gap:8px;box-shadow:0 8px 32px rgba(0,0,0,.4);animation:toastIn .25s ease}
-@keyframes toastIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+/* Output tabs */
+.out-tabs{display:flex;gap:0;border-bottom:1px solid var(--border);overflow-x:auto}
+.out-tab{display:flex;align-items:center;gap:7px;padding:14px 20px;font-size:.875rem;font-weight:500;color:var(--t3);cursor:pointer;border:none;background:none;font-family:var(--fb);transition:all .15s;border-bottom:2px solid transparent;white-space:nowrap}
+.out-tab:hover{color:var(--t2)}
+.out-tab.active{color:var(--blue);border-bottom-color:var(--blue);background:rgba(91,123,255,.04)}
+.out-tab-emoji{font-size:1rem}
 
-/* HISTORY */
-.history-item{padding:12px 14px;background:var(--ink3);border:1px solid var(--border);border-radius:9px;margin-bottom:8px;cursor:pointer;transition:border-color .15s}
-.history-item:hover{border-color:var(--blue)}
-.history-date{font-size:.6875rem;color:var(--t3);margin-bottom:3px}
-.history-preview{font-size:.8125rem;color:var(--t2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.history-tools{display:flex;gap:4px;margin-top:6px;flex-wrap:wrap}
-.history-tool-pill{font-size:.5rem;font-weight:700;padding:2px 6px;border-radius:3px;background:var(--blue-faint);color:var(--blue)}
+/* Output body */
+.out-body{padding:0}
+.out-body-header{padding:16px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.out-audience{font-size:.6875rem;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:.1em;margin-bottom:3px}
+.out-name{font-size:1rem;font-weight:600;color:var(--t1)}
+.copy-btn{display:flex;align-items:center;gap:6px;padding:8px 16px;background:var(--ink3);border:1px solid var(--border2);border-radius:8px;font-size:.8125rem;font-weight:600;color:var(--t2);cursor:pointer;font-family:var(--fb);transition:all .15s}
+.copy-btn:hover{color:var(--t1);border-color:var(--border3)}
+.out-text{padding:24px;font-size:.9375rem;color:var(--t1);line-height:1.8;white-space:pre-wrap;min-height:200px;max-height:440px;overflow-y:auto}
+.out-footer{padding:12px 24px;border-top:1px solid var(--border);display:flex;align-items:center;gap:8px;background:var(--ink3)}
+.tone-label{font-size:.6875rem;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.08em;margin-right:2px}
+.tbtn-tone{font-size:.75rem;font-weight:600;padding:5px 12px;border-radius:6px;border:1px solid var(--border2);background:transparent;color:var(--t3);cursor:pointer;font-family:var(--fb);transition:all .15s}
+.tbtn-tone.active{background:var(--blue-faint);color:var(--blue);border-color:rgba(91,123,255,.3)}
+.tbtn-tone:hover:not(.active){color:var(--t2);border-color:var(--border3)}
 
-@media(max-width:900px){.page{grid-template-columns:1fr}.sidebar{position:static}}
+/* ── TOAST ── */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--ink3);border:1px solid var(--border2);border-radius:11px;padding:12px 18px;font-size:.875rem;font-weight:500;color:var(--t1);z-index:9999;display:flex;align-items:center;gap:9px;box-shadow:0 12px 40px rgba(0,0,0,.5);animation:toastIn .25s ease}
+@keyframes toastIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── CONNECT MODAL ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:999;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(10px);padding:20px}
+.modal{background:var(--ink2);border:1px solid var(--border2);border-radius:20px;padding:32px;width:100%;max-width:440px;box-shadow:0 32px 80px rgba(0,0,0,.5)}
+.modal-tool-header{display:flex;align-items:center;gap:14px;margin-bottom:20px}
+.modal-tool-icon{width:52px;height:52px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;flex-shrink:0}
+.modal-tool-name{font-family:var(--fd);font-weight:700;font-size:1.25rem;letter-spacing:-.03em;color:var(--t1)}
+.modal-tool-desc{font-size:.875rem;color:var(--t2);margin-top:2px}
+.modal-demo-box{background:var(--ink3);border:1px solid rgba(91,123,255,.2);border-radius:11px;padding:14px 16px;margin-bottom:16px}
+.modal-demo-label{font-size:.625rem;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px}
+.modal-demo-text{font-size:.875rem;color:var(--t2);line-height:1.55}
+.modal-note{font-size:.8125rem;color:var(--t3);margin-bottom:20px;line-height:1.5}
+.modal-btns{display:flex;gap:10px}
+.modal-cancel{flex:1;padding:12px;background:transparent;border:1px solid var(--border2);border-radius:9px;color:var(--t2);font-family:var(--fb);font-size:.9375rem;font-weight:600;cursor:pointer;transition:all .15s}
+.modal-cancel:hover{color:var(--t1);border-color:var(--border3)}
+.modal-confirm{flex:1;padding:12px;background:var(--blue);border:none;border-radius:9px;color:#fff;font-family:var(--fb);font-size:.9375rem;font-weight:700;cursor:pointer;transition:background .15s}
+.modal-confirm:hover{background:var(--blue-dim)}
+
+@media(max-width:960px){.page{grid-template-columns:1fr}.sidebar{position:static}.nav-center{display:none}}
 </style>
 </head>
 <body>
 
+<!-- NAV -->
 <nav class="nav">
   <div class="nav-inner">
     <a href="index.html" class="logo">
       <div class="logo-mark">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
-          <path d="M12 3C8 3 5 6 5 9c0 2 1 3.5 2 4.5" stroke="white" stroke-width="2" stroke-linecap="round"/>
-          <path d="M12 8C9 8 7 10 7 12.5c0 1.5.7 2.8 1.5 3.5" stroke="white" stroke-width="2" stroke-linecap="round" opacity=".7"/>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+          <path d="M12 3C8 3 5 6 5 9c0 2 1 3.5 2 4.5" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+          <path d="M12 8C9 8 7 10 7 12.5c0 1.5.7 2.8 1.5 3.5" stroke="white" stroke-width="2" stroke-linecap="round" opacity=".75"/>
           <path d="M12 13c-2 0-3 1.5-3 3s1 3 3 3 3-1.5 3-3-1-3-3-3z" fill="white"/>
         </svg>
       </div>
       Cascade
     </a>
+    <div class="nav-center">
+      <button class="nav-tab active">Dashboard</button>
+      <button class="nav-tab" onclick="alert('Coming soon')">Templates</button>
+      <button class="nav-tab" onclick="alert('Coming soon')">Settings</button>
+    </div>
     <div class="nav-right">
-      <div class="user-chip" id="user-chip">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-        <span id="user-email-display">loading...</span>
+      <div class="user-pill">
+        <div class="user-avatar" id="user-avatar">?</div>
+        <span class="user-name" id="user-email-display">loading...</span>
       </div>
-      <button class="btn btn-ghost" onclick="signOut()">Sign out</button>
+      <button class="btn-signout" onclick="signOut()">Sign out</button>
     </div>
   </div>
 </nav>
 
+<!-- PAGE -->
 <div class="page">
+
   <!-- SIDEBAR -->
   <div class="sidebar">
+
     <!-- API Key -->
-    <div class="panel">
-      <div class="panel-header">
-        <div class="panel-title">Claude API Key</div>
-        <span id="api-key-status" style="font-size:.625rem;font-weight:700;color:var(--t3)">Not set</span>
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Claude API Key</div>
+        <div class="api-status-dot" id="api-dot"></div>
       </div>
-      <div class="panel-body">
-        <div style="font-size:.75rem;color:var(--t2);margin-bottom:8px;line-height:1.5">Required to generate updates. Your key, your data.</div>
-        <div class="api-key-row">
-          <input type="password" class="api-key-input" id="api-key-input" placeholder="sk-ant-api03-...">
-          <button class="api-key-save" onclick="saveApiKey()">Save</button>
+      <div class="card-body">
+        <div class="api-hint">Required to generate updates. Stored locally — never sent to our servers.</div>
+        <div class="api-input-wrap">
+          <input type="password" class="api-input" id="api-key-input" placeholder="sk-ant-api03-...">
+          <button class="api-save-btn" onclick="saveApiKey()">Save</button>
         </div>
-        <div style="font-size:.6875rem;color:var(--t3);margin-top:6px">~$0.05 per update · <a href="https://console.anthropic.com" target="_blank" style="color:var(--blue)">Get key →</a></div>
+        <div class="api-footer">~$0.05 per full update · <a href="https://console.anthropic.com" target="_blank">Get API key →</a></div>
       </div>
     </div>
 
-    <!-- Tool Connections -->
-    <div class="panel">
-      <div class="panel-header">
-        <div class="panel-title">Connected Tools</div>
-        <span id="connected-count" style="font-size:.6875rem;font-weight:700;color:var(--t3)">0 connected</span>
+    <!-- Connected Tools -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Connected Tools</div>
+        <div class="connected-badge" id="connected-badge">0 connected</div>
       </div>
-      <div class="panel-body" id="tools-list">
-        <!-- Populated by JS -->
+      <div class="card-body" style="padding:8px" id="tools-list"></div>
+    </div>
+
+    <!-- History -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Update History</div>
+      </div>
+      <div class="card-body" id="history-list">
+        <div class="history-empty">No updates yet</div>
       </div>
     </div>
 
-    <!-- Update History -->
-    <div class="panel">
-      <div class="panel-header">
-        <div class="panel-title">Update History</div>
-      </div>
-      <div class="panel-body" id="history-list">
-        <div style="text-align:center;padding:20px;color:var(--t3);font-size:.8125rem">No updates yet</div>
-      </div>
-    </div>
   </div>
 
   <!-- MAIN -->
   <div class="main">
-    <!-- Agent Panel -->
-    <div class="agent-panel">
-      <div class="agent-header">
+
+    <!-- Agent card -->
+    <div class="agent-card">
+      <div class="agent-top">
         <div>
-          <div class="agent-title">Weekly Update Agent</div>
-          <div class="agent-sub" id="agent-sub">Connect your tools and pull this week's activity</div>
+          <div class="agent-label">Weekly Update Agent</div>
+          <div class="agent-title">What happened<br>this week?</div>
+          <div class="agent-sub" id="agent-sub">Connect your tools, pull activity, generate 6 stakeholder updates.</div>
         </div>
-        <select class="timeframe-select" id="timeframe">
-          <option value="7">Last 7 days</option>
-          <option value="14">Last 14 days</option>
-          <option value="30">Last 30 days</option>
-          <option value="custom">This sprint</option>
-        </select>
+        <div class="agent-meta">
+          <select class="timeframe-sel" id="timeframe">
+            <option value="7">Last 7 days</option>
+            <option value="14">Last 14 days</option>
+            <option value="30">Last 30 days</option>
+          </select>
+        </div>
       </div>
       <div class="agent-body">
 
         <!-- Empty state -->
-        <div class="pull-empty" id="pull-empty">
-          <div class="pull-empty-icon">⚡</div>
-          <div class="pull-empty-title">Ready to pull your week</div>
-          <div class="pull-empty-sub">Connect at least one tool on the left, then let the agent scan what happened.</div>
+        <div class="empty-state" id="pull-empty">
+          <div class="empty-icon">⚡</div>
+          <div class="empty-title">Ready to pull your week</div>
+          <div class="empty-sub">Connect at least one tool on the left — GitHub, Jira, Slack, Notion, Linear or Gmail — then let the agent scan what happened.</div>
           <button class="pull-btn" id="pull-btn" onclick="pullData()" disabled>
             <div class="spinner" id="pull-spinner"></div>
-            <svg id="pull-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+            <svg id="pull-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
             Pull this week's activity
           </button>
         </div>
 
         <!-- Pulled data -->
         <div class="pulled-data" id="pulled-data">
-          <div class="pulled-header">
-            <div class="pulled-title">Agent found this week</div>
-            <div class="pulled-meta" id="pulled-meta"></div>
+          <div class="pulled-top">
+            <div class="pulled-heading">Agent found this week</div>
+            <div class="pulled-time" id="pulled-meta"></div>
           </div>
           <div id="tool-sections"></div>
 
-          <div class="context-label">Add anything the agent missed</div>
-          <textarea class="context-input" id="extra-context" placeholder="e.g. 'We made a key decision to pause Feature X due to technical debt. The exec review was moved to next week.'"></textarea>
+          <div class="ctx-label">Anything to add?</div>
+          <textarea class="ctx-input" id="extra-context" placeholder="Add decisions, context, or anything the agent missed — e.g. 'We decided to pause Feature X. Exec review moved to next week.'"></textarea>
 
-          <div class="generate-row">
-            <div class="generate-hint" id="generate-hint">6 updates ready to generate</div>
-            <button class="generate-btn" id="generate-btn" onclick="generateUpdates()">
+          <div class="gen-bar">
+            <div class="gen-hint" id="generate-hint">✦ 6 stakeholder updates ready to generate</div>
+            <button class="gen-btn" id="generate-btn" onclick="generateUpdates()">
               <div class="spinner" id="gen-spinner"></div>
-              <svg id="gen-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+              <svg id="gen-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
               Generate 6 updates
             </button>
           </div>
@@ -269,38 +325,38 @@ a{text-decoration:none;color:var(--blue)}
       </div>
     </div>
 
-    <!-- Outputs Panel -->
-    <div class="outputs-panel" id="outputs-panel">
-      <div class="outputs-header">
-        <div class="outputs-title">✦ Your stakeholder updates</div>
-        <button class="btn btn-ghost" onclick="copyAll()" style="font-size:.75rem">Copy all →</button>
+    <!-- Outputs -->
+    <div class="outputs-card" id="outputs-panel">
+      <div class="outputs-top">
+        <div class="outputs-heading">Your <em>stakeholder updates</em></div>
+        <button class="copy-all-btn" onclick="copyAll()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          Copy all 6
+        </button>
       </div>
-
-      <div class="outputs-tabs" id="outputs-tabs" style="margin-bottom:14px">
-        <!-- Populated by JS -->
-      </div>
-
-      <div class="output-content">
-        <div class="output-content-header">
+      <div class="out-tabs" id="outputs-tabs"></div>
+      <div class="out-body">
+        <div class="out-body-header">
           <div>
-            <div class="output-audience-label" id="output-audience"></div>
-            <div class="output-name" id="output-name"></div>
+            <div class="out-audience" id="output-audience"></div>
+            <div class="out-name" id="output-name"></div>
           </div>
           <button class="copy-btn" onclick="copyCurrentOutput()">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
             Copy
           </button>
         </div>
-        <div class="output-body" id="output-body">Select an update type above</div>
-        <div class="output-tone-row">
+        <div class="out-text" id="output-body">Select a tab above to view your update</div>
+        <div class="out-footer">
           <span class="tone-label">Tone</span>
-          <button class="tone-btn active" onclick="setTone('balanced',this)">Balanced</button>
-          <button class="tone-btn" onclick="setTone('formal',this)">More formal</button>
-          <button class="tone-btn" onclick="setTone('casual',this)">More casual</button>
-          <button class="tone-btn" onclick="setTone('concise',this)">Shorter</button>
+          <button class="tbtn-tone active" onclick="setTone('balanced',this)">Balanced</button>
+          <button class="tbtn-tone" onclick="setTone('formal',this)">Formal</button>
+          <button class="tbtn-tone" onclick="setTone('casual',this)">Casual</button>
+          <button class="tbtn-tone" onclick="setTone('concise',this)">Concise</button>
         </div>
       </div>
     </div>
+
   </div>
 </div>
 
