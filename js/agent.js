@@ -7,7 +7,37 @@ let session = null;
 let _outputs = {};
 let _currentTab = 0;
 let _currentTone = 'balanced';
-let _lastDataContext = ''; // stored after generate so tone changes can reuse it
+let _lastDataContext = '';
+let _focusQuery = ''; // smart search query
+
+// ── SMART SEARCH ──
+function setSearch(query) {
+  _focusQuery = query;
+  const input = document.getElementById('focus-query');
+  if (input) input.value = query;
+  const clearBtn = document.getElementById('search-clear');
+  if (clearBtn) clearBtn.style.display = query ? 'block' : 'none';
+}
+
+function clearSearch() {
+  _focusQuery = '';
+  const input = document.getElementById('focus-query');
+  if (input) input.value = '';
+  const clearBtn = document.getElementById('search-clear');
+  if (clearBtn) clearBtn.style.display = 'none';
+}
+
+// Wire search input live
+document.addEventListener('DOMContentLoaded', () => {
+  const input = document.getElementById('focus-query');
+  if (input) {
+    input.addEventListener('input', e => {
+      _focusQuery = e.target.value.trim();
+      const clearBtn = document.getElementById('search-clear');
+      if (clearBtn) clearBtn.style.display = _focusQuery ? 'block' : 'none';
+    });
+  }
+});
 
 const OUTPUT_TYPES = [
   { id: 'executive',    label: 'Executive',    audience: 'CEO · CPO · C-Suite',      emoji: '🎯' },
@@ -259,7 +289,22 @@ async function generateUpdates() {
     });
 
     if (extraContext) dataContext += `\nADDITIONAL CONTEXT:\n${extraContext}`;
-    _lastDataContext = dataContext; // save for tone rewrites
+
+    // Apply focus query if set
+    const focusQuery = document.getElementById('focus-query')?.value.trim() || '';
+    if (focusQuery) {
+      dataContext += `\n\nFOCUS INSTRUCTION: The user wants the update to specifically focus on: "${focusQuery}". Emphasise and prioritise information related to this in all 6 outputs. Still include critical blockers, key decisions, and major wins even if not directly related.`;
+    }
+
+    _lastDataContext = dataContext;
+
+    // Show focus badge in generate hint
+    const genHint = document.getElementById('generate-hint');
+    if (genHint) {
+      genHint.innerHTML = focusQuery
+        ? `✦ Generating with focus: <span class="search-active-badge">${focusQuery}</span>`
+        : '✦ Generating 6 stakeholder updates...';
+    }
 
     // Run all 6 in parallel
     await Promise.allSettled(OUTPUT_TYPES.map(async type => {
@@ -383,9 +428,21 @@ function renderOutputs() {
 
   showOutput(0);
 
-  // Open the drawer
+  // Show focus query in drawer if set
+  const focusQuery = document.getElementById('focus-query')?.value.trim() || '';
+  const drawerTitle = document.querySelector('.drawer-title');
+  if (drawerTitle) {
+    drawerTitle.innerHTML = focusQuery
+      ? `Your <em>stakeholder updates</em> <span class="search-active-badge" style="font-size:.75rem;vertical-align:middle">Focus: ${focusQuery}</span>`
+      : `Your <em>stakeholder updates</em>`;
+  }
+
+  // Open the modal
   const overlay = document.getElementById('outputs-overlay');
   if (overlay) overlay.classList.add('open');
+  // Hide reopen button since modal is open
+  const reopenRow = document.getElementById('reopen-row');
+  if (reopenRow) reopenRow.style.display = 'none';
 }
 
 function closeOutputs() {

@@ -125,7 +125,7 @@ body{font-family:'Satoshi',sans-serif;background:var(--bg);color:var(--t1);min-h
 .step-row:hover .step-cta svg{transform:translateX(3px)}
 
 /* ── PULL CARD ── */
-.pull-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;box-shadow:var(--shadow-sm);display:none}
+.pull-card{background:var(--surface);border:1px solid var(--border);border-radius:14px 14px 0 0;overflow:hidden;box-shadow:var(--shadow-sm);display:none}
 .pull-card.show{display:block}
 .pull-card-header{padding:20px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
 .pull-card-title{font-size:1rem;font-weight:700;color:var(--t1);letter-spacing:-.02em}
@@ -142,7 +142,7 @@ body{font-family:'Satoshi',sans-serif;background:var(--bg);color:var(--t1);min-h
 .tsec-arr{color:var(--blue);font-weight:700;flex-shrink:0}
 
 /* ── CONTEXT + GENERATE ── */
-.ctx-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px 24px;margin-top:16px;box-shadow:var(--shadow-sm);display:none}
+.ctx-card{background:var(--surface);border:1px solid var(--border);border-top:none;border-radius:0 0 14px 14px;padding:20px 24px;box-shadow:var(--shadow-sm);display:none}
 .ctx-card.show{display:block}
 .ctx-label{font-size:.75rem;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px}
 .ctx-ta{width:100%;padding:12px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:9px;font-family:'Satoshi',sans-serif;font-size:.9375rem;color:var(--t1);outline:none;resize:vertical;min-height:80px;line-height:1.6;transition:border-color .15s}
@@ -155,6 +155,16 @@ body{font-family:'Satoshi',sans-serif;background:var(--bg);color:var(--t1);min-h
 .gen-btn:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none}
 @keyframes spin{to{transform:rotate(360deg)}}
 .sp{width:15px;height:15px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;display:none}
+
+
+/* ── SMART SEARCH ── */
+.search-input{width:100%;padding:11px 14px 11px 42px;background:var(--surface);border:1.5px solid var(--border);border-radius:10px;font-family:'Satoshi',sans-serif;font-size:.9375rem;color:var(--t1);outline:none;transition:all .2s;box-shadow:var(--shadow-sm)}
+.search-input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(75,99,245,.1)}
+.search-input::placeholder{color:var(--t3)}
+.search-examples{display:flex;align-items:center;gap:6px;margin-top:8px;flex-wrap:wrap}
+.search-pill{padding:4px 11px;background:var(--surface);border:1px solid var(--border);border-radius:99px;font-family:'Satoshi',sans-serif;font-size:.75rem;font-weight:500;color:var(--t2);cursor:pointer;transition:all .15s}
+.search-pill:hover{background:var(--blue-a);border-color:rgba(75,99,245,.25);color:var(--blue)}
+.search-active-badge{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;background:var(--blue-a);border:1px solid rgba(75,99,245,.2);border-radius:99px;font-size:.75rem;font-weight:600;color:var(--blue);margin-left:8px}
 
 /* ── PULL BUTTON in empty state ── */
 .empty-card{background:var(--surface);border:2px dashed var(--border);border-radius:14px;padding:40px 24px;text-align:center;margin-bottom:16px}
@@ -307,6 +317,31 @@ body{font-family:'Satoshi',sans-serif;background:var(--bg);color:var(--t1);min-h
       </div>
     </div>
 
+
+    <!-- Smart search / focus query -->
+    <div class="search-bar-wrap" id="search-bar-wrap" style="margin-bottom:20px">
+      <div style="position:relative">
+        <svg style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--t3);pointer-events:none" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input
+          type="text"
+          id="focus-query"
+          class="search-input"
+          placeholder="Focus on something specific — e.g. 'blockers and risks' or 'what shipped to production' (optional)"
+          autocomplete="off"
+        >
+        <div id="search-clear" onclick="clearSearch()" style="display:none;position:absolute;right:12px;top:50%;transform:translateY(-50%);cursor:pointer;color:var(--t3);padding:4px">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </div>
+      </div>
+      <div class="search-examples">
+        <span style="font-size:.6875rem;color:var(--t3);margin-right:6px">Try:</span>
+        <button class="search-pill" onclick="setSearch('blockers and risks')">blockers and risks</button>
+        <button class="search-pill" onclick="setSearch('what shipped to production')">what shipped to production</button>
+        <button class="search-pill" onclick="setSearch('decisions made this week')">decisions made this week</button>
+        <button class="search-pill" onclick="setSearch('customer impact')">customer impact</button>
+      </div>
+    </div>
+
     <!-- Onboarding -->
     <div class="onboard" id="onboard-steps">
       <div class="onboard-title">Get started in 3 steps</div>
@@ -347,7 +382,8 @@ body{font-family:'Satoshi',sans-serif;background:var(--bg);color:var(--t1);min-h
       </button>
     </div>
 
-    <!-- Pulled data -->
+    <!-- Pulled data + context — no gap between them -->
+    <div id="pulled-and-ctx">
     <div class="pull-card" id="pulled-data">
       <div class="pull-card-header">
         <div class="pull-card-title">Agent found this week</div>
@@ -356,7 +392,6 @@ body{font-family:'Satoshi',sans-serif;background:var(--bg);color:var(--t1);min-h
       <div class="pull-card-body" id="tool-sections"></div>
     </div>
 
-    <!-- Context + Generate -->
     <div class="ctx-card" id="ctx-card">
       <div class="ctx-label">Anything to add?</div>
       <textarea class="ctx-ta" id="extra-context" placeholder="Add decisions, context, or anything the agent missed — e.g. 'We decided to pause Feature X. Exec review moved to next week.'"></textarea>
@@ -375,6 +410,7 @@ body{font-family:'Satoshi',sans-serif;background:var(--bg);color:var(--t1);min-h
         </button>
       </div>
     </div>
+    </div><!-- /pulled-and-ctx -->
 
   </div><!-- /main -->
 </div><!-- /layout -->

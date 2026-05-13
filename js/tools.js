@@ -356,13 +356,13 @@ window.CascadeTools = (() => {
       const data = _pulledData[t.id];
       if (!data) return '';
       return `<div class="tsec">
-          <div class="tsec-h">
-            <span class="tsec-icon">${t.icon}</span>
+          <div class="tsec-head">
+            <div style="width:18px;height:18px;flex-shrink:0">${getToolLogo(t.id)}</div>
             <span class="tsec-name">${t.name}</span>
             <span class="tsec-sum">${data.summary}</span>
           </div>
-          <div class="tsec-body">
-            ${data.items.map(item => `<div class="tsec-item"><span class="tsec-dot">→</span><span>${item}</span></div>`).join('')}
+          <div class="tsec-items">
+            ${data.items.map(item => `<div class="tsec-row"><span class="tsec-arr">→</span><span>${item}</span></div>`).join('')}
           </div>
         </div>`;
     }).join('');
