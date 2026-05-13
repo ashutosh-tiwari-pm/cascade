@@ -67,15 +67,16 @@ async function init() {
   const avatarEl = document.getElementById('user-av');
   if (avatarEl) avatarEl.textContent = name[0].toUpperCase();
 
-  // Load API key
+  // Load API key — treat 'demo-mode' placeholder as not a real key
   const key = localStorage.getItem('cascade_api_key') || '';
+  const isRealKey = key && key !== 'demo-mode';
   const keyInput = document.getElementById('api-key-input');
-  if (keyInput && key) keyInput.value = '••••••••••••••••';
+  if (keyInput && isRealKey) keyInput.value = '••••••••••••••••';
   // Set status immediately on load
   const dotEl = document.getElementById('api-dot');
-  if (dotEl) dotEl.classList.toggle('on', !!key);
+  if (dotEl) dotEl.classList.toggle('on', isRealKey);
   const stEl = document.getElementById('api-status-txt');
-  if (stEl) { stEl.textContent = key ? '● Set' : '● Not set'; stEl.style.color = key ? 'var(--green)' : 'var(--t3)'; }
+  if (stEl) { stEl.textContent = isRealKey ? '● Set' : '● Not set'; stEl.style.color = isRealKey ? 'var(--green)' : 'var(--t3)'; }
 
   // Render tools
   CascadeTools.renderTools();
@@ -146,7 +147,8 @@ function showDemoBanner() {
 
 // ── ONBOARDING ──
 function updateOnboarding() {
-  const hasKey = !!localStorage.getItem('cascade_api_key');
+  const storedKey = localStorage.getItem('cascade_api_key') || '';
+  const hasKey = storedKey && storedKey !== 'demo-mode';
   const hasTools = CascadeTools.getConnectedTools().length > 0;
 
   const s1 = document.getElementById('step-1');
@@ -450,7 +452,7 @@ function renderOutputs() {
   const drawerTitle = document.querySelector('.drawer-title');
   if (drawerTitle) {
     drawerTitle.innerHTML = focusQuery
-      ? `Your <em>stakeholder updates</em> <span class="search-active-badge" style="font-size:.75rem;vertical-align:middle">Focus: ${focusQuery}</span>`
+      ? `Your <em>stakeholder updates</em> &nbsp;<span class="search-active-badge">⚡ ${focusQuery}</span>`
       : `Your <em>stakeholder updates</em>`;
   }
 
@@ -482,10 +484,52 @@ function switchOutputTab(idx, btn) {
   showOutput(idx);
 }
 
+// ── MARKDOWN RENDERER ──
+function renderMarkdown(text) {
+  if (!text) return '';
+  let html = text
+    // Escape HTML first
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    // Headers
+    .replace(/^### (.+)$/gm, '<h3>$1</h3>')
+    .replace(/^## (.+)$/gm, '<h2>$1</h2>')
+    .replace(/^# (.+)$/gm, '<h1>$1</h1>')
+    // Bold + italic
+    .replace(/\*\*\*(.+?)\*\*\*/g, '<strong><em>$1</em></strong>')
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*(.+?)\*/g, '<em>$1</em>')
+    // Horizontal rule
+    .replace(/^---+$/gm, '<hr>')
+    // Unordered lists
+    .replace(/^[\*\-] (.+)$/gm, '<li>$1</li>')
+    // Wrap consecutive li in ul
+    .replace(/(<li>.*<\/li>\n?)+/g, m => '<ul>' + m + '</ul>')
+    // Inline code
+    .replace(/`(.+?)`/g, '<code>$1</code>')
+    // Blockquote
+    .replace(/^&gt; (.+)$/gm, '<blockquote>$1</blockquote>')
+    // Paragraphs — wrap lines not already in a block tag
+    .split('\n')
+    .map(line => {
+      const trimmed = line.trim();
+      if (!trimmed) return '<br>';
+      if (/^<(h[123]|ul|ol|li|hr|blockquote)/.test(trimmed)) return trimmed;
+      return '<p>' + trimmed + '</p>';
+    })
+    .join('\n')
+    // Clean up extra breaks
+    .replace(/(<br>\s*){3,}/g, '<br><br>')
+    .replace(/<p><\/p>/g, '')
+    .replace(/<p><br><\/p>/g, '');
+  return html;
+}
+
 function showOutput(idx) {
   const type = OUTPUT_TYPES[idx];
   const bodyEl = document.getElementById('output-body');
-  if (bodyEl) bodyEl.textContent = _outputs[type.id] || 'Generating...';
+  if (!bodyEl) return;
+  const raw = _outputs[type.id] || '';
+  bodyEl.innerHTML = raw ? renderMarkdown(raw) : '<p style="color:var(--t3)">Generating...</p>';
 }
 
 function copyCurrentOutput() {
@@ -529,7 +573,7 @@ async function setTone(tone, btn) {
 
   // Show loading in output body
   const bodyEl = document.getElementById('output-body');
-  if (bodyEl) bodyEl.textContent = 'Rewriting in ' + tone + ' tone...';
+  if (bodyEl) bodyEl.innerHTML = '<p style="color:var(--t3)">Rewriting in ' + tone + ' tone...</p>';
 
   // Disable all tone buttons while regenerating
   document.querySelectorAll('.tone-btn').forEach(b => b.disabled = true);
@@ -537,9 +581,9 @@ async function setTone(tone, btn) {
   try {
     const newOutput = await callClaude(currentType.id, dataContext, apiKey);
     _outputs[currentType.id] = newOutput;
-    if (bodyEl) bodyEl.textContent = newOutput;
+    if (bodyEl) bodyEl.innerHTML = renderMarkdown(newOutput);
   } catch(e) {
-    if (bodyEl) bodyEl.textContent = _outputs[currentType.id] || '';
+    if (bodyEl) bodyEl.innerHTML = renderMarkdown(_outputs[currentType.id] || '');
     CascadeTools.showToast('⚠ Tone rewrite failed — showing original');
   } finally {
     document.querySelectorAll('.tone-btn').forEach(b => b.disabled = false);
