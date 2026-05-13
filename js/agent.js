@@ -216,12 +216,13 @@ Write the email update now. Start with the subject line.`,
 function renderOutputs() {
   const panel = document.getElementById('outputs-panel');
   panel.classList.add('show');
+  const ph = document.getElementById('out-placeholder');
+  if (ph) ph.style.display = 'none';
 
   const tabs = document.getElementById('outputs-tabs');
   tabs.innerHTML = OUTPUT_TYPES.map((t, i) => `
     <button class="out-tab ${i===0?'active':''}" onclick="switchOutputTab(${i},this)">
-      <span class="out-tab-emoji">${t.emoji}</span>
-      ${t.label}
+      ${t.emoji} ${t.label}
     </button>`).join('');
 
   showOutput(0);
@@ -231,7 +232,7 @@ function renderOutputs() {
 function switchOutputTab(idx, btn) {
   _currentTab = idx;
   document.querySelectorAll('.out-tab').forEach(t => t.classList.remove('active'));
-  btn.classList.add('active');
+  btn.classList.add('on');
   showOutput(idx);
 }
 
@@ -262,7 +263,7 @@ function copyAll() {
 function setTone(tone, btn) {
   _currentTone = tone;
   document.querySelectorAll('.tone-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
+  btn.classList.add('on');
 }
 
 // ── HISTORY ──
@@ -295,14 +296,14 @@ async function loadHistory() {
     if (!el) return;
 
     if (!data || data.length === 0) {
-      el.innerHTML = '<div class="history-empty">No updates yet</div>';
+      el.innerHTML = '<div class="hist-empty">No updates yet</div>';
       return;
     }
 
     el.innerHTML = data.map(u => `
       <div class="hist-item" onclick="loadHistoryItem('${u.id}')">
         <div class="hist-date">${new Date(u.created_at).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})}</div>
-        <div class="hist-preview">${(u.outputs?.executive || 'Update generated').slice(0,80)}...</div>
+        <div class="hist-prev">${(u.outputs?.executive || 'Update generated').slice(0,80)}...</div>
         <div class="hist-pills">
           ${(u.tools_used||[]).map(t => `<span class="hist-pill">${t}</span>`).join('')}
         </div>
