@@ -391,6 +391,14 @@ function renderOutputs() {
 function closeOutputs() {
   const overlay = document.getElementById('outputs-overlay');
   if (overlay) overlay.classList.remove('open');
+  // Show reopen button so user doesn't have to regenerate
+  const reopenRow = document.getElementById('reopen-row');
+  if (reopenRow && Object.keys(_outputs).length > 0) reopenRow.style.display = 'block';
+}
+
+function reopenOutputs() {
+  const overlay = document.getElementById('outputs-overlay');
+  if (overlay) overlay.classList.add('open');
 }
 
 function switchOutputTab(idx, btn) {
