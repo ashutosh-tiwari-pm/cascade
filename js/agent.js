@@ -165,10 +165,11 @@ async function generateUpdates() {
   const genBtn = document.getElementById('generate-btn');
   const genSpinner = document.getElementById('gen-spinner');
   const genIcon = document.getElementById('gen-icon');
-  genBtn.disabled = true;
-  genSpinner.style.display = 'block';
-  genIcon.style.display = 'none';
-  document.getElementById('generate-hint').textContent = 'Generating 6 updates...';
+  const genHint = document.getElementById('generate-hint');
+  if (genBtn) genBtn.disabled = true;
+  if (genSpinner) genSpinner.style.display = 'block';
+  if (genIcon) genIcon.style.display = 'none';
+  if (genHint) genHint.textContent = 'Generating 6 updates...';
 
   try {
     // Build context string from pulled data
@@ -200,10 +201,10 @@ async function generateUpdates() {
   } catch(e) {
     alert('Generation failed: ' + e.message);
   } finally {
-    genBtn.disabled = false;
-    genSpinner.style.display = 'none';
-    genIcon.style.display = 'block';
-    document.getElementById('generate-hint').textContent = '6 updates ready to generate';
+    if (genBtn) genBtn.disabled = false;
+    if (genSpinner) genSpinner.style.display = 'none';
+    if (genIcon) genIcon.style.display = 'block';
+    if (genHint) genHint.textContent = '✦ 6 stakeholder updates ready';
   }
 }
 

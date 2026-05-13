@@ -234,59 +234,63 @@ window.CascadeTools = (() => {
     const pullSpinner = document.getElementById('pull-spinner');
     const pullIcon = document.getElementById('pull-icon');
 
-    pullBtn.disabled = true;
-    pullSpinner.style.display = 'block';
-    pullIcon.style.display = 'none';
-    pullBtn.childNodes[pullBtn.childNodes.length-1].textContent = ' Pulling data...';
+    if (pullBtn) pullBtn.disabled = true;
+    if (pullSpinner) pullSpinner.style.display = 'block';
+    if (pullIcon) pullIcon.style.display = 'none';
+    if (pullBtn) pullBtn.lastChild.textContent = ' Pulling data...';
 
-    // Simulate realistic pull delay
-    await new Promise(r => setTimeout(r, 1800 + Math.random() * 1200));
-
-    // Use demo data for each connected tool
-    _pulledData = {};
-    connectedTools.forEach(t => { _pulledData[t.id] = t.demoData; });
-
-    renderPulledData(connectedTools);
-
-    pullBtn.disabled = false;
-    pullSpinner.style.display = 'none';
-    pullIcon.style.display = 'block';
+    try {
+      await new Promise(r => setTimeout(r, 1800 + Math.random() * 1200));
+      _pulledData = {};
+      connectedTools.forEach(t => { _pulledData[t.id] = t.demoData; });
+      renderPulledData(connectedTools);
+    } finally {
+      if (pullBtn) pullBtn.disabled = false;
+      if (pullSpinner) pullSpinner.style.display = 'none';
+      if (pullIcon) pullIcon.style.display = 'block';
+      if (pullBtn) pullBtn.lastChild.textContent = ' Pull this week\'s activity';
+    }
   }
 
   // ── RENDER PULLED DATA ──
   function renderPulledData(tools) {
-    document.getElementById('pull-empty').style.display = 'none';
+    // Hide onboarding + pull empty
+    const onboard = document.getElementById('onboard-steps');
+    if (onboard) onboard.style.display = 'none';
+    const pullEmpty = document.getElementById('pull-empty');
+    if (pullEmpty) pullEmpty.style.display = 'none';
+
     const pulled = document.getElementById('pulled-data');
+    if (!pulled) return;
     pulled.style.display = 'block';
 
     const now = new Date();
-    document.getElementById('pulled-meta').textContent =
+    const metaEl = document.getElementById('pulled-meta');
+    if (metaEl) metaEl.textContent =
       `Pulled ${now.toLocaleDateString('en-GB',{day:'numeric',month:'short'})} · ${tools.length} tool${tools.length!==1?'s':''}`;
 
     const sections = document.getElementById('tool-sections');
-    sections.innerHTML = tools.map(t => {
+    if (sections) sections.innerHTML = tools.map(t => {
       const data = _pulledData[t.id];
       if (!data) return '';
-      return `
-        <div class="tool-section">
-          <div class="tool-section-header">
-            <span class="tool-section-icon">${t.icon}</span>
-            <span class="tool-section-name">${t.name}</span>
-            <span class="tool-section-count">${data.summary}</span>
+      return `<div class="tsec">
+          <div class="tsec-h">
+            <span class="tsec-icon">${t.icon}</span>
+            <span class="tsec-name">${t.name}</span>
+            <span class="tsec-sum">${data.summary}</span>
           </div>
-          <div class="tool-section-items">
-            ${data.items.map(item => `
-              <div class="tool-item-row">
-                <span class="tool-item-bullet">→</span>
-                <span>${item}</span>
-              </div>`).join('')}
+          <div class="tsec-body">
+            ${data.items.map(item => `<div class="tsec-item"><span class="tsec-dot">→</span><span>${item}</span></div>`).join('')}
           </div>
         </div>`;
     }).join('');
 
-    // Update agent sub
-    document.getElementById('agent-sub').textContent =
-      `Pulled ${tools.length} tool${tools.length!==1?'s':''} · Review and generate updates`;
+    // Update conn-count badge
+    const connCount = document.getElementById('conn-count');
+    if (connCount) {
+      connCount.textContent = tools.length + ' tool' + (tools.length!==1?'s':'') + ' scanned';
+      connCount.className = 'conn-count has';
+    }
   }
 
   function getPulledData() { return _pulledData; }
