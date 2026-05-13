@@ -59,8 +59,6 @@ body{font-family:'Satoshi',sans-serif;background:var(--bg);color:var(--t1);min-h
 .api-card-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
 .api-card-name{font-size:.8125rem;font-weight:700;color:var(--t1)}
 .api-status{display:flex;align-items:center;gap:4px;font-size:.625rem;font-weight:700}
-.api-dot{width:7px;height:7px;border-radius:50%;background:var(--border2)}
-.api-dot.on{background:var(--green);box-shadow:0 0 6px rgba(5,150,105,.4)}
 .api-inp{width:100%;padding:7px 9px;background:var(--surface);border:1px solid var(--border);border-radius:7px;font-family:monospace;font-size:.6875rem;color:var(--t1);outline:none;margin-bottom:7px;transition:border-color .15s}
 .api-inp:focus{border-color:var(--blue)}
 .api-inp::placeholder{color:var(--t3)}
@@ -290,8 +288,7 @@ body{font-family:'Satoshi',sans-serif;background:var(--bg);color:var(--t1);min-h
         <div class="api-card-row">
           <div class="api-card-name">API Key</div>
           <div class="api-status">
-            <div class="api-dot" id="api-dot"></div>
-            <span id="api-status-txt" style="color:var(--t3)">Not set</span>
+            <span id="api-status-txt" style="color:var(--t3);font-size:.6875rem;font-weight:600">Not set</span>
           </div>
         </div>
         <input type="password" class="api-inp" id="api-key-input" placeholder="sk-ant-api03-...">

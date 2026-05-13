@@ -73,8 +73,6 @@ async function init() {
   const keyInput = document.getElementById('api-key-input');
   if (keyInput && isRealKey) keyInput.value = '••••••••••••••••';
   // Set status immediately on load
-  const dotEl = document.getElementById('api-dot');
-  if (dotEl) dotEl.classList.toggle('on', isRealKey);
   const stEl = document.getElementById('api-status-txt');
   if (stEl) { stEl.textContent = isRealKey ? 'Set' : 'Not set'; stEl.style.color = isRealKey ? 'var(--green)' : 'var(--t3)'; }
 
@@ -109,10 +107,8 @@ async function initDemoMode() {
   CascadeTools.renderTools();
 
   // Mark API key dot as live
-  const dot = document.getElementById('api-dot');
-  if (dot) dot.classList.add('on');
   const stEl2 = document.getElementById('api-status-txt');
-  if (stEl2) { stEl2.textContent = 'Set'; stEl2.style.color = 'var(--green)'; }
+  if (stEl2) { stEl2.textContent = 'Demo mode'; stEl2.style.color = 'var(--amber)'; }
 
   // Hide onboarding, go straight to pre-pulled state
   const onboard = document.getElementById('onboard-steps');
@@ -160,10 +156,8 @@ function updateOnboarding() {
   const s1a = document.getElementById('step-1-cta');
   const pullEmpty = document.getElementById('pull-empty');
   const onboard = document.getElementById('onboard-steps');
-  const dot = document.getElementById('api-dot');
 
-  // API dot
-  if (dot) { dot.classList.toggle('on', hasKey); }
+  // API status text only (no dot element)
   const statusTxt = document.getElementById('api-status-txt');
   if (statusTxt) {
     statusTxt.textContent = hasKey ? 'Set' : 'Not set';
@@ -240,8 +234,6 @@ function saveApiKey() {
   localStorage.setItem('cascade_api_key', val);
   document.getElementById('api-key-input').value = '••••••••••••••••';
   // Update dot immediately without waiting for updateOnboarding
-  const dot = document.getElementById('api-dot');
-  if (dot) dot.classList.add('on');
   const statusTxt = document.getElementById('api-status-txt');
   if (statusTxt) { statusTxt.textContent = 'Set'; statusTxt.style.color = 'var(--green)'; }
   CascadeTools.showToast('✓ API key saved');
@@ -270,8 +262,8 @@ async function generateUpdates() {
     }
     localStorage.setItem('cascade_api_key', key);
     apiKey = key;
-    const dot = document.getElementById('api-dot');
-    if (dot) dot.classList.add('live');
+    const stTxt = document.getElementById('api-status-txt');
+    if (stTxt) { stTxt.textContent = 'Set'; stTxt.style.color = 'var(--green)'; }
   }
 
   if (!apiKey || apiKey === 'demo-mode') {
