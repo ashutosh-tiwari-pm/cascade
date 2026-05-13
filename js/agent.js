@@ -18,7 +18,15 @@ const OUTPUT_TYPES = [
   { id: 'email',        label: 'Email',        audience: 'External · Newsletter',     emoji: '✉️' },
 ];
 
+// ── DEMO MODE ──
+const IS_DEMO = new URLSearchParams(location.search).get('demo') === 'true';
+
 async function init() {
+  if (IS_DEMO) {
+    initDemoMode();
+    return;
+  }
+
   session = await requireAuth();
   if (!session) return;
 
@@ -42,6 +50,61 @@ async function init() {
 
   // Wire onboarding
   updateOnboarding();
+}
+
+async function initDemoMode() {
+  // Hide auth elements, show demo banner
+  const signoutBtn = document.querySelector('.topbar-btn');
+  if (signoutBtn) {
+    signoutBtn.textContent = 'Sign up free';
+    signoutBtn.onclick = () => location.href = 'login.html?mode=signup';
+  }
+  const emailEl = document.getElementById('user-email-display');
+  if (emailEl) emailEl.textContent = 'demo user';
+  const avatarEl = document.getElementById('user-avatar');
+  if (avatarEl) avatarEl.textContent = 'D';
+
+  // Show demo banner
+  showDemoBanner();
+
+  // Pre-connect 3 tools and mark API key as set
+  localStorage.setItem('cascade_api_key', 'demo-mode');
+  CascadeTools.preConnectForDemo(['github', 'jira', 'slack']);
+  CascadeTools.renderTools();
+
+  // Mark API key dot as live
+  const dot = document.getElementById('api-dot');
+  if (dot) dot.classList.add('live');
+
+  // Hide onboarding, go straight to pre-pulled state
+  const onboard = document.getElementById('onboard-steps');
+  if (onboard) onboard.style.display = 'none';
+
+  // Auto-pull after short delay for dramatic effect
+  await new Promise(r => setTimeout(r, 600));
+  await CascadeTools.pullData();
+
+  // Update conn-count
+  const connCount = document.getElementById('conn-count');
+  if (connCount) { connCount.textContent = '3 tools scanned'; connCount.className = 'conn-count has'; }
+
+  // Show generate button area with hint
+  const genHint = document.getElementById('generate-hint');
+  if (genHint) genHint.innerHTML = '✦ Demo data loaded — click Generate to see AI outputs';
+}
+
+function showDemoBanner() {
+  const bar = document.createElement('div');
+  bar.style.cssText = 'background:linear-gradient(90deg,rgba(94,114,255,.15),rgba(155,109,255,.15));border-bottom:1px solid rgba(94,114,255,.2);padding:8px 28px;display:flex;align-items:center;justify-content:space-between;font-size:.8125rem;flex-shrink:0';
+  bar.innerHTML = `
+    <div style="display:flex;align-items:center;gap:8px;color:rgba(242,244,255,.7)">
+      <span style="background:var(--blue);color:#fff;font-size:.625rem;font-weight:700;padding:2px 7px;border-radius:4px;letter-spacing:.05em">DEMO</span>
+      You're viewing a live demo with sample data — no account needed.
+    </div>
+    <a href="login.html?mode=signup" style="color:var(--blue);font-weight:700;font-size:.8125rem;text-decoration:none">Create free account →</a>`;
+  // Insert after topbar
+  const topbar = document.querySelector('.topbar');
+  if (topbar) topbar.after(bar);
 }
 
 // ── ONBOARDING ──
@@ -147,9 +210,23 @@ async function pullData() {
 
 // ── GENERATE UPDATES ──
 async function generateUpdates() {
-  const apiKey = localStorage.getItem('cascade_api_key');
-  if (!apiKey) {
-    alert('Please add your Claude API key first');
+  let apiKey = localStorage.getItem('cascade_api_key');
+
+  // Demo mode with no real key — prompt to add one
+  if (IS_DEMO && apiKey === 'demo-mode') {
+    const key = prompt('To generate AI updates, enter your Claude API key:\n(Get one free at console.anthropic.com)');
+    if (!key || !key.startsWith('sk-')) {
+      CascadeTools.showToast('⚠ Valid API key needed to generate updates');
+      return;
+    }
+    localStorage.setItem('cascade_api_key', key);
+    apiKey = key;
+    const dot = document.getElementById('api-dot');
+    if (dot) dot.classList.add('live');
+  }
+
+  if (!apiKey || apiKey === 'demo-mode') {
+    alert('Please add your Claude API key in the sidebar first');
     return;
   }
 

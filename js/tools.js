@@ -128,6 +128,69 @@ window.CascadeTools = (() => {
         ]
       }
     },
+    {
+      id: 'teams',
+      name: 'MS Teams',
+      icon: '🪟',
+      color: '#4F52B2',
+      bg: 'rgba(79,82,178,0.12)',
+      description: 'Channel updates, decisions, meetings',
+      connectUrl: 'https://login.microsoftonline.com/common/oauth2/v2.0/authorize',
+      demoData: {
+        summary: '4 channel updates · 3 decisions · 2 meeting summaries',
+        items: [
+          'Decision (General): Q4 hiring plan approved — 3 new engineers',
+          'Decision (Product): Feature Y deprioritised in favour of API stability',
+          'Meeting summary: Sprint review — velocity up 18% vs last sprint',
+          'Meeting summary: Stakeholder sync — timeline confirmed with client',
+          '#engineering: Azure deployment pipeline updated to v3',
+          '#product: Competitor analysis doc shared and reviewed',
+          'Action item: Marcus to set up staging environment by Friday',
+        ]
+      }
+    },
+    {
+      id: 'outlook',
+      name: 'Outlook',
+      icon: '📨',
+      color: '#0078D4',
+      bg: 'rgba(0,120,212,0.1)',
+      description: 'Executive emails, approvals, threads',
+      connectUrl: 'https://login.microsoftonline.com/common/oauth2/v2.0/authorize',
+      demoData: {
+        summary: '2 approvals · 1 escalation · 5 key threads',
+        items: [
+          'Approval: CTO signed off on infrastructure upgrade ($40K)',
+          'Approval: Legal cleared new data processing agreement',
+          'Escalation: Enterprise client TechFlow flagged SLA concern',
+          'Thread: Q3 board update draft — 3 rounds of feedback',
+          'Thread: Renewal negotiation with Datadog — 20% discount agreed',
+          'Thread: Candidate interviews — 2 offers extended this week',
+        ]
+      }
+    },
+    {
+      id: 'azuredevops',
+      name: 'Azure DevOps',
+      icon: '☁️',
+      color: '#0078D4',
+      bg: 'rgba(0,120,212,0.12)',
+      description: 'Work items, pipelines, sprints',
+      connectUrl: 'https://app.vssps.visualstudio.com/oauth2/authorize',
+      demoData: {
+        summary: 'Sprint 14: 91% complete · 3 pipelines deployed · 0 failed',
+        items: [
+          'Sprint 14: 41/45 work items completed (91%)',
+          'Pipeline: Production deploy successful — v3.2.1',
+          'Pipeline: Staging deploy successful — v3.3.0-beta',
+          'Pipeline: DR test completed — RTO within SLA',
+          'Work item: Azure SQL migration — Phase 1 complete',
+          'Work item: API gateway upgrade — in review',
+          'Blocked: WORK-1204 — pending security review sign-off',
+          'New: 6 bugs filed, 9 closed (net -3)',
+        ]
+      }
+    },
   ];
 
   let _connected = new Set(JSON.parse(localStorage.getItem('cascade_connected') || '[]'));
@@ -296,6 +359,12 @@ window.CascadeTools = (() => {
   function getPulledData() { return _pulledData; }
   function getConnectedTools() { return TOOLS.filter(t => _connected.has(t.id)); }
 
+  // ── DEMO MODE ──
+  function preConnectForDemo(toolIds) {
+    toolIds.forEach(id => _connected.add(id));
+    saveConnected();
+  }
+
   function showToast(msg) {
     document.querySelector('.toast')?.remove();
     const t = document.createElement('div');
@@ -305,5 +374,5 @@ window.CascadeTools = (() => {
     setTimeout(() => t.remove(), 3000);
   }
 
-  return { renderTools, connect, confirmConnect, disconnect, pullData, getPulledData, getConnectedTools, showToast };
+  return { renderTools, connect, confirmConnect, disconnect, pullData, getPulledData, getConnectedTools, showToast, preConnectForDemo };
 })();
