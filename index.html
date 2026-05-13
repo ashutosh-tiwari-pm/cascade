@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cascade — AI Stakeholder Update Agent</title>
+<link rel="preconnect" href="https://api.fontshare.com">
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@900,700,500,400&f[]=clash-display@700,600&display=swap">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px;-webkit-font-smoothing:antialiased;scroll-behavior:smooth}
+:root{
+  --ink:#0A0A0F;--ink2:#12121A;--ink3:#1A1A26;
+  --border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.12);
+  --blue:#4F6EF7;--blue-dim:#3D5AE5;--blue-faint:rgba(79,110,247,0.1);
+  --cyan:#00D4FF;--cyan-faint:rgba(0,212,255,0.08);
+  --violet:#8B5CF6;--violet-faint:rgba(139,92,246,0.1);
+  --amber:#F59E0B;--green:#10B981;--red:#EF4444;
+  --t1:#F0F4FF;--t2:#8892B0;--t3:#4A5568;
+  --fd:'Clash Display',sans-serif;--fb:'Satoshi',sans-serif;
+}
+body{font-family:var(--fb);background:var(--ink);color:var(--t1);overflow-x:hidden}
+a{text-decoration:none;color:inherit}
+
+/* ── NAV ── */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:18px 0;border-bottom:1px solid transparent;transition:all .3s}
+nav.scrolled{background:rgba(10,10,15,.9);border-color:var(--border);backdrop-filter:blur(16px)}
+.nav-inner{max-width:1160px;margin:0 auto;padding:0 32px;display:flex;align-items:center;justify-content:space-between}
+.logo{display:flex;align-items:center;gap:10px;font-family:var(--fd);font-weight:700;font-size:1.25rem;letter-spacing:-.04em;color:var(--t1)}
+.logo-mark{width:34px;height:34px;background:linear-gradient(135deg,var(--blue),var(--cyan));border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.nav-links{display:flex;align-items:center;gap:32px}
+.nav-link{font-size:.875rem;font-weight:500;color:var(--t2);transition:color .15s}
+.nav-link:hover{color:var(--t1)}
+.btn-nav{padding:9px 20px;background:var(--blue);color:#fff;border-radius:8px;font-family:var(--fb);font-size:.875rem;font-weight:600;transition:background .15s}
+.btn-nav:hover{background:var(--blue-dim)}
+
+/* ── HERO ── */
+.hero{min-height:100vh;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;padding:120px 32px 80px}
+
+/* Animated cascade background */
+.hero-bg{position:absolute;inset:0;overflow:hidden}
+.cascade-line{position:absolute;top:-100%;width:1px;background:linear-gradient(180deg,transparent,var(--blue),var(--cyan),transparent);animation:cascade linear infinite;opacity:0}
+@keyframes cascade{0%{top:-100%;opacity:0}10%{opacity:.6}90%{opacity:.3}100%{top:200%;opacity:0}}
+.hero-glow{position:absolute;top:20%;left:50%;transform:translateX(-50%);width:600px;height:600px;background:radial-gradient(ellipse,rgba(79,110,247,0.15) 0%,transparent 70%);pointer-events:none}
+
+.hero-content{max-width:800px;text-align:center;position:relative;z-index:1}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:var(--blue-faint);border:1px solid rgba(79,110,247,.3);padding:6px 16px;border-radius:99px;font-size:.75rem;font-weight:600;color:var(--blue);letter-spacing:.06em;text-transform:uppercase;margin-bottom:28px}
+.hero-badge-dot{width:6px;height:6px;border-radius:50%;background:var(--cyan);animation:pulse 2s ease infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.8)}}
+
+.hero h1{font-family:var(--fd);font-weight:700;font-size:clamp(2.75rem,7vw,5rem);letter-spacing:-.05em;line-height:1.0;color:var(--t1);margin-bottom:12px}
+.hero h1 em{font-style:normal;background:linear-gradient(135deg,var(--blue),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-sub{font-size:1.125rem;color:var(--t2);line-height:1.7;max-width:560px;margin:0 auto 40px}
+.hero-sub strong{color:var(--t1)}
+
+.hero-cta{display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap}
+.btn-primary{display:inline-flex;align-items:center;gap:8px;padding:14px 28px;background:var(--blue);color:#fff;border-radius:10px;font-family:var(--fb);font-size:1rem;font-weight:700;transition:all .2s;box-shadow:0 0 32px rgba(79,110,247,.35)}
+.btn-primary:hover{background:var(--blue-dim);transform:translateY(-2px);box-shadow:0 0 48px rgba(79,110,247,.5)}
+.btn-secondary{display:inline-flex;align-items:center;gap:8px;padding:14px 28px;background:transparent;color:var(--t2);border:1px solid var(--border2);border-radius:10px;font-family:var(--fb);font-size:1rem;font-weight:600;transition:all .2s}
+.btn-secondary:hover{color:var(--t1);border-color:rgba(255,255,255,.25)}
+
+/* Trust strip */
+.hero-trust{margin-top:48px;font-size:.8125rem;color:var(--t3);display:flex;align-items:center;justify-content:center;gap:20px;flex-wrap:wrap}
+.trust-item{display:flex;align-items:center;gap:6px;color:var(--t2)}
+.trust-dot{width:4px;height:4px;border-radius:50%;background:var(--t3)}
+
+/* ── HOW IT WORKS ── */
+.section{padding:100px 32px;max-width:1160px;margin:0 auto}
+.section-label{font-size:.6875rem;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:.12em;margin-bottom:12px}
+.section-title{font-family:var(--fd);font-weight:700;font-size:clamp(1.75rem,4vw,2.75rem);letter-spacing:-.04em;color:var(--t1);margin-bottom:16px;line-height:1.1}
+.section-sub{font-size:1rem;color:var(--t2);line-height:1.7;max-width:520px}
+
+/* Flow diagram */
+.flow{display:grid;grid-template-columns:1fr 40px 1fr 40px 1fr;align-items:center;gap:0;margin-top:60px}
+.flow-step{background:var(--ink2);border:1px solid var(--border2);border-radius:16px;padding:28px;text-align:center;transition:border-color .2s}
+.flow-step:hover{border-color:var(--blue)}
+.flow-step-num{width:36px;height:36px;border-radius:50%;background:var(--blue-faint);border:1px solid rgba(79,110,247,.3);display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-weight:700;font-size:.875rem;color:var(--blue);margin:0 auto 14px}
+.flow-step-title{font-family:var(--fd);font-weight:700;font-size:1rem;color:var(--t1);margin-bottom:8px;letter-spacing:-.02em}
+.flow-step-desc{font-size:.8125rem;color:var(--t2);line-height:1.6}
+.flow-arrow{display:flex;align-items:center;justify-content:center;color:var(--blue);opacity:.5}
+
+/* ── INTEGRATIONS ── */
+.integrations-section{background:var(--ink2);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:80px 32px}
+.integrations-inner{max-width:1160px;margin:0 auto}
+.integrations-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;margin-top:48px}
+.integration-card{background:var(--ink);border:1px solid var(--border2);border-radius:12px;padding:16px;text-align:center;transition:all .2s;cursor:default}
+.integration-card:hover{border-color:var(--blue);background:var(--blue-faint)}
+.integration-icon{font-size:1.75rem;margin-bottom:8px;display:block}
+.integration-name{font-size:.75rem;font-weight:600;color:var(--t2)}
+.integration-card.tier1{border-color:rgba(79,110,247,.25)}
+.integration-badge{font-size:.5rem;font-weight:700;padding:1px 5px;border-radius:3px;background:var(--blue-faint);color:var(--blue);display:inline-block;margin-top:3px;letter-spacing:.05em;text-transform:uppercase}
+
+/* ── OUTPUTS ── */
+.outputs-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:48px}
+.output-card{background:var(--ink2);border:1px solid var(--border2);border-radius:14px;padding:22px;transition:all .2s;position:relative;overflow:hidden}
+.output-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--gradient);opacity:0;transition:opacity .2s}
+.output-card:hover::before{opacity:1}
+.output-card:hover{border-color:var(--border2);transform:translateY(-2px)}
+.output-icon{font-size:1.5rem;margin-bottom:12px}
+.output-title{font-family:var(--fd);font-weight:700;font-size:1rem;color:var(--t1);margin-bottom:4px;letter-spacing:-.02em}
+.output-audience{font-size:.6875rem;font-weight:600;color:var(--blue);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px}
+.output-desc{font-size:.8125rem;color:var(--t2);line-height:1.6}
+.output-preview{margin-top:12px;padding:10px 12px;background:var(--ink);border-radius:8px;border:1px solid var(--border);font-size:.6875rem;color:var(--t3);font-family:monospace;line-height:1.5}
+
+/* ── DEMO PREVIEW ── */
+.demo-section{padding:80px 32px;background:linear-gradient(180deg,var(--ink) 0%,var(--ink2) 50%,var(--ink) 100%)}
+.demo-inner{max-width:900px;margin:0 auto;text-align:center}
+.demo-window{background:var(--ink2);border:1px solid var(--border2);border-radius:20px;overflow:hidden;margin-top:48px;box-shadow:0 40px 120px rgba(0,0,0,.5)}
+.demo-titlebar{background:var(--ink3);padding:14px 20px;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--border)}
+.demo-dot{width:10px;height:10px;border-radius:50%}
+.demo-url{flex:1;text-align:center;font-size:.75rem;color:var(--t3)}
+.demo-body{padding:28px;display:grid;grid-template-columns:240px 1fr;gap:20px;min-height:440px}
+.demo-sidebar{display:flex;flex-direction:column;gap:10px}
+.demo-tool-pill{display:flex;align-items:center;gap:8px;padding:9px 12px;background:var(--ink3);border:1px solid var(--border2);border-radius:8px}
+.demo-tool-pill.connected{border-color:rgba(16,185,129,.3);background:rgba(16,185,129,.05)}
+.demo-tool-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.demo-tool-name{font-size:.75rem;font-weight:600;color:var(--t2)}
+.demo-tool-status{font-size:.5625rem;color:var(--t3);margin-left:auto}
+.demo-tool-pill.connected .demo-tool-name{color:var(--t1)}
+.demo-tool-pill.connected .demo-tool-status{color:var(--green)}
+.demo-main{display:flex;flex-direction:column;gap:12px}
+.demo-input-area{background:var(--ink3);border:1px solid var(--border2);border-radius:10px;padding:14px;font-size:.75rem;color:var(--t2);line-height:1.6;flex:1}
+.demo-input-area strong{color:var(--t1);display:block;margin-bottom:6px;font-size:.6875rem;text-transform:uppercase;letter-spacing:.08em;color:var(--blue)}
+.demo-generate-btn{padding:11px;background:var(--blue);border-radius:8px;font-size:.8125rem;font-weight:700;color:#fff;text-align:center;cursor:pointer}
+.demo-outputs{display:flex;gap:6px;flex-wrap:wrap}
+.demo-output-pill{font-size:.5625rem;font-weight:700;padding:3px 8px;border-radius:5px;background:var(--blue-faint);color:var(--blue);border:1px solid rgba(79,110,247,.2)}
+
+/* ── FOOTER ── */
+footer{background:var(--ink2);border-top:1px solid var(--border);padding:48px 32px}
+.footer-inner{max-width:1160px;margin:0 auto;display:flex;align-items:center;justify-content:space-between}
+.footer-copy{font-size:.8125rem;color:var(--t3)}
+.footer-links{display:flex;gap:24px}
+.footer-link{font-size:.8125rem;color:var(--t3);transition:color .15s}
+.footer-link:hover{color:var(--t2)}
+
+@media(max-width:768px){
+  .flow{grid-template-columns:1fr;}.flow-arrow{transform:rotate(90deg)}
+  .outputs-grid{grid-template-columns:1fr}
+  .demo-body{grid-template-columns:1fr}
+  .demo-sidebar{display:none}
+  .nav-links{display:none}
+  .footer-inner{flex-direction:column;gap:16px;text-align:center}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="nav">
+  <div class="nav-inner">
+    <a href="#" class="logo">
+      <div class="logo-mark">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+          <path d="M12 3C8 3 5 6 5 9c0 2 1 3.5 2 4.5" stroke="white" stroke-width="2" stroke-linecap="round"/>
+          <path d="M12 8C9 8 7 10 7 12.5c0 1.5.7 2.8 1.5 3.5" stroke="white" stroke-width="2" stroke-linecap="round" opacity=".7"/>
+          <path d="M12 13c-2 0-3 1.5-3 3s1 3 3 3 3-1.5 3-3-1-3-3-3z" fill="white"/>
+        </svg>
+      </div>
+      Cascade
+    </a>
+    <div class="nav-links">
+      <a href="#how" class="nav-link">How it works</a>
+      <a href="#integrations" class="nav-link">Integrations</a>
+      <a href="#outputs" class="nav-link">Outputs</a>
+      <a href="login.html" class="btn-nav">Get started free</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg" id="hero-bg"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-content">
+    <div class="hero-badge">
+      <div class="hero-badge-dot"></div>
+      AI-powered · MCP-native · Zero data entry
+    </div>
+    <h1>Your weekly update,<br><em>written itself.</em></h1>
+    <p class="hero-sub">
+      Cascade connects to your tools — Jira, GitHub, Slack, Notion, Linear — pulls everything that happened this week, and generates <strong>6 tailored stakeholder updates</strong> in under 60 seconds.
+    </p>
+    <div class="hero-cta">
+      <a href="login.html" class="btn-primary">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        Start free — connect your tools
+      </a>
+      <a href="#how" class="btn-secondary">See how it works →</a>
+    </div>
+    <div class="hero-trust">
+      <span class="trust-item">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+        Zero data entry
+      </span>
+      <div class="trust-dot"></div>
+      <span class="trust-item">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+        Your API key, your data
+      </span>
+      <div class="trust-dot"></div>
+      <span class="trust-item">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+        ~$0.05 per update
+      </span>
+      <div class="trust-dot"></div>
+      <span class="trust-item">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+        12+ integrations
+      </span>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<div id="how">
+<div class="section">
+  <div class="section-label">How it works</div>
+  <div class="section-title">Connect once.<br>Update forever.</div>
+  <div class="section-sub">No forms to fill. No copy-pasting from Jira. Cascade pulls from your actual tools and writes every version of your update automatically.</div>
+
+  <div class="flow">
+    <div class="flow-step">
+      <div class="flow-step-num">1</div>
+      <div class="flow-step-title">Connect your stack</div>
+      <div class="flow-step-desc">One-click OAuth to Jira, GitHub, Slack, Notion, Linear, Microsoft 365 and more. Takes 3 minutes once.</div>
+    </div>
+    <div class="flow-arrow">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </div>
+    <div class="flow-step">
+      <div class="flow-step-num">2</div>
+      <div class="flow-step-title">Agent pulls your week</div>
+      <div class="flow-step-desc">Cascade scans the last 7 days — tickets closed, PRs merged, decisions in Slack, docs updated — and drafts a summary.</div>
+    </div>
+    <div class="flow-arrow">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </div>
+    <div class="flow-step">
+      <div class="flow-step-num">3</div>
+      <div class="flow-step-title">Review → 6 updates ready</div>
+      <div class="flow-step-desc">Glance at the draft, add anything the agent missed, click Generate. Six tailored updates appear in seconds.</div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- INTEGRATIONS -->
+<section class="integrations-section" id="integrations">
+  <div class="integrations-inner">
+    <div class="section-label">Integrations</div>
+    <div class="section-title">Works where you work.</div>
+    <div class="section-sub">Connects to the tools PMs actually use. Phase 1 integrations live now — more coming every sprint.</div>
+
+    <div class="integrations-grid">
+      <div class="integration-card tier1">
+        <span class="integration-icon">🐙</span>
+        <div class="integration-name">GitHub</div>
+        <div class="integration-badge">Live</div>
+      </div>
+      <div class="integration-card tier1">
+        <span class="integration-icon">🎯</span>
+        <div class="integration-name">Jira</div>
+        <div class="integration-badge">Live</div>
+      </div>
+      <div class="integration-card tier1">
+        <span class="integration-icon">💬</span>
+        <div class="integration-name">Slack</div>
+        <div class="integration-badge">Live</div>
+      </div>
+      <div class="integration-card tier1">
+        <span class="integration-icon">📝</span>
+        <div class="integration-name">Notion</div>
+        <div class="integration-badge">Live</div>
+      </div>
+      <div class="integration-card tier1">
+        <span class="integration-icon">⚡</span>
+        <div class="integration-name">Linear</div>
+        <div class="integration-badge">Live</div>
+      </div>
+      <div class="integration-card tier1">
+        <span class="integration-icon">📧</span>
+        <div class="integration-name">Gmail</div>
+        <div class="integration-badge">Live</div>
+      </div>
+      <div class="integration-card">
+        <span class="integration-icon">🪟</span>
+        <div class="integration-name">MS Teams</div>
+        <div class="integration-badge" style="background:rgba(139,92,246,.1);color:#8B5CF6">Soon</div>
+      </div>
+      <div class="integration-card">
+        <span class="integration-icon">📋</span>
+        <div class="integration-name">Azure DevOps</div>
+        <div class="integration-badge" style="background:rgba(139,92,246,.1);color:#8B5CF6">Soon</div>
+      </div>
+      <div class="integration-card">
+        <span class="integration-icon">🔀</span>
+        <div class="integration-name">Confluence</div>
+        <div class="integration-badge" style="background:rgba(139,92,246,.1);color:#8B5CF6">Soon</div>
+      </div>
+      <div class="integration-card">
+        <span class="integration-icon">📊</span>
+        <div class="integration-name">Asana</div>
+        <div class="integration-badge" style="background:rgba(139,92,246,.1);color:#8B5CF6">Soon</div>
+      </div>
+      <div class="integration-card">
+        <span class="integration-icon">🐛</span>
+        <div class="integration-name">Sentry</div>
+        <div class="integration-badge" style="background:rgba(139,92,246,.1);color:#8B5CF6">Soon</div>
+      </div>
+      <div class="integration-card">
+        <span class="integration-icon">📈</span>
+        <div class="integration-name">Mixpanel</div>
+        <div class="integration-badge" style="background:rgba(139,92,246,.1);color:#8B5CF6">Soon</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- OUTPUTS -->
+<div id="outputs">
+<div class="section">
+  <div class="section-label">What you get</div>
+  <div class="section-title">Six updates.<br>One click.</div>
+  <div class="section-sub">The same information, perfectly calibrated for each audience. No more rewriting the same update five different ways.</div>
+
+  <div class="outputs-grid">
+    <div class="output-card" style="--gradient:linear-gradient(90deg,#4F6EF7,#00D4FF)">
+      <div class="output-icon">🎯</div>
+      <div class="output-audience">C-Suite · Board</div>
+      <div class="output-title">Executive Summary</div>
+      <div class="output-desc">3 bullets. Metrics-led. No jargon. What shipped, what slipped, what you need.</div>
+      <div class="output-preview">✅ Shipped: Payment v2 (↑12% conversion)<br>⚠️ Delayed: API migration → Week 3<br>🚧 Need: Design sign-off by Friday</div>
+    </div>
+    <div class="output-card" style="--gradient:linear-gradient(90deg,#10B981,#4F6EF7)">
+      <div class="output-icon">⚙️</div>
+      <div class="output-audience">Engineering · Tech Lead</div>
+      <div class="output-title">Engineering Update</div>
+      <div class="output-desc">Sprint velocity, PRs merged, blockers, technical debt flagged, next sprint plan.</div>
+      <div class="output-preview">Sprint 24: 34/38 pts · 12 PRs merged<br>Blocked: Auth service dependency<br>Tech debt: Redis upgrade queued</div>
+    </div>
+    <div class="output-card" style="--gradient:linear-gradient(90deg,#F59E0B,#EF4444)">
+      <div class="output-icon">🤝</div>
+      <div class="output-audience">Customer Success · Sales</div>
+      <div class="output-title">Customer Update</div>
+      <div class="output-desc">What shipped that affects customers, positive framing, no internal drama.</div>
+      <div class="output-preview">New this week: Faster checkout flow<br>Coming soon: Mobile app redesign<br>Known issue: Search ETA Friday</div>
+    </div>
+    <div class="output-card" style="--gradient:linear-gradient(90deg,#8B5CF6,#4F6EF7)">
+      <div class="output-icon">📊</div>
+      <div class="output-audience">Investors · Board</div>
+      <div class="output-title">Board Update</div>
+      <div class="output-desc">Strategic framing, KPI movements, market context, risks and mitigations.</div>
+      <div class="output-preview">Q2 velocity on track (+8% vs plan)<br>Key risk: Competitor launch Q3<br>Mitigation: Accelerating feature X</div>
+    </div>
+    <div class="output-card" style="--gradient:linear-gradient(90deg,#00D4FF,#10B981)">
+      <div class="output-icon">💬</div>
+      <div class="output-audience">Team · Standup</div>
+      <div class="output-title">Slack Standup</div>
+      <div class="output-desc">Casual tone, emoji-ready, @mention placeholders, 5 lines max. Paste and post.</div>
+      <div class="output-preview">🚢 Shipped: Payment v2 🎉<br>🔨 WIP: API migration (on track)<br>🚫 Blocked: Need @design review<br>📅 This week: Mobile sprint kickoff</div>
+    </div>
+    <div class="output-card" style="--gradient:linear-gradient(90deg,#EF4444,#8B5CF6)">
+      <div class="output-icon">✉️</div>
+      <div class="output-audience">External · Newsletter</div>
+      <div class="output-title">Email Update</div>
+      <div class="output-desc">Formatted, professional, ready to send. Subject line included.</div>
+      <div class="output-preview">Subject: Product Update — Week 19<br><br>Hi team,<br>This week we shipped our new payment<br>flow, reducing checkout time by 40%...</div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- DEMO WINDOW -->
+<section class="demo-section">
+  <div class="demo-inner">
+    <div class="section-label" style="text-align:center">Live product</div>
+    <div class="section-title" style="text-align:center;max-width:none">What it looks like inside</div>
+
+    <div class="demo-window">
+      <div class="demo-titlebar">
+        <div class="demo-dot" style="background:#FF5F57"></div>
+        <div class="demo-dot" style="background:#FEBC2E"></div>
+        <div class="demo-dot" style="background:#28C840"></div>
+        <div class="demo-url">cascade.app · Weekly Update · Sprint 24</div>
+      </div>
+      <div class="demo-body">
+        <div class="demo-sidebar">
+          <div style="font-size:.5625rem;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px">Connected tools</div>
+          <div class="demo-tool-pill connected">
+            <div class="demo-tool-dot" style="background:#10B981"></div>
+            <span class="demo-tool-name">GitHub</span>
+            <span class="demo-tool-status">✓ Live</span>
+          </div>
+          <div class="demo-tool-pill connected">
+            <div class="demo-tool-dot" style="background:#10B981"></div>
+            <span class="demo-tool-name">Jira</span>
+            <span class="demo-tool-status">✓ Live</span>
+          </div>
+          <div class="demo-tool-pill connected">
+            <div class="demo-tool-dot" style="background:#10B981"></div>
+            <span class="demo-tool-name">Slack</span>
+            <span class="demo-tool-status">✓ Live</span>
+          </div>
+          <div class="demo-tool-pill connected">
+            <div class="demo-tool-dot" style="background:#10B981"></div>
+            <span class="demo-tool-name">Notion</span>
+            <span class="demo-tool-status">✓ Live</span>
+          </div>
+          <div class="demo-tool-pill">
+            <div class="demo-tool-dot" style="background:var(--t3)"></div>
+            <span class="demo-tool-name">Linear</span>
+            <span class="demo-tool-status">+ Connect</span>
+          </div>
+          <div class="demo-tool-pill">
+            <div class="demo-tool-dot" style="background:var(--t3)"></div>
+            <span class="demo-tool-name">Gmail</span>
+            <span class="demo-tool-status">+ Connect</span>
+          </div>
+        </div>
+        <div class="demo-main">
+          <div class="demo-input-area">
+            <strong>Agent pulled this week</strong>
+            🐙 GitHub: 12 PRs merged · 3 releases · 0 incidents<br>
+            🎯 Jira: 34 tickets closed · 4 blocked · Sprint 24 at 89%<br>
+            💬 Slack: 2 decisions logged · 1 blocker escalated<br>
+            📝 Notion: API spec updated · Roadmap Q3 revised<br>
+            <br>
+            <span style="color:var(--t3)">+ Add anything the agent missed...</span>
+          </div>
+          <div class="demo-generate-btn">⚡ Generate 6 stakeholder updates →</div>
+          <div>
+            <div style="font-size:.5625rem;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px">Output formats ready</div>
+            <div class="demo-outputs">
+              <span class="demo-output-pill">Executive Summary</span>
+              <span class="demo-output-pill">Engineering Update</span>
+              <span class="demo-output-pill">Customer Facing</span>
+              <span class="demo-output-pill">Board Update</span>
+              <span class="demo-output-pill">Slack Standup</span>
+              <span class="demo-output-pill">Email Newsletter</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<div class="section" style="text-align:center;max-width:600px;margin:0 auto;padding:80px 32px">
+  <div class="section-label" style="text-align:center">Get started</div>
+  <div class="section-title" style="text-align:center;max-width:none">Stop writing updates.<br>Start shipping.</div>
+  <p style="color:var(--t2);margin:16px 0 36px;font-size:1rem;line-height:1.7">Connect your tools in 3 minutes. Your first update is free. No credit card needed — bring your own Claude API key.</p>
+  <a href="login.html" class="btn-primary" style="font-size:1.0625rem;padding:16px 36px">
+    Start free → Connect your tools
+  </a>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="logo" style="font-size:1rem">
+      <div class="logo-mark" style="width:26px;height:26px">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+          <path d="M12 3C8 3 5 6 5 9c0 2 1 3.5 2 4.5" stroke="white" stroke-width="2" stroke-linecap="round"/>
+          <path d="M12 8C9 8 7 10 7 12.5c0 1.5.7 2.8 1.5 3.5" stroke="white" stroke-width="2" stroke-linecap="round" opacity=".7"/>
+          <path d="M12 13c-2 0-3 1.5-3 3s1 3 3 3 3-1.5 3-3-1-3-3-3z" fill="white"/>
+        </svg>
+      </div>
+      Cascade
+    </div>
+    <div class="footer-copy">Built by Ashutosh Tiwari · 2026</div>
+    <div class="footer-links">
+      <a href="https://github.com/ashutosh-tiwari-pm/cascade" class="footer-link">GitHub</a>
+      <a href="login.html" class="footer-link">Sign in</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+// Animated cascade lines in hero
+const bg = document.getElementById('hero-bg');
+for (let i = 0; i < 20; i++) {
+  const line = document.createElement('div');
+  line.className = 'cascade-line';
+  line.style.left = Math.random() * 100 + '%';
+  line.style.animationDuration = (3 + Math.random() * 6) + 's';
+  line.style.animationDelay = (Math.random() * 8) + 's';
+  line.style.height = (80 + Math.random() * 120) + 'px';
+  line.style.opacity = 0;
+  bg.appendChild(line);
+  setTimeout(() => line.style.opacity = Math.random() * 0.5 + 0.1, Math.random() * 2000);
+}
+
+// Scrolled nav
+window.addEventListener('scroll', () => {
+  document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 40);
+});
+</script>
+</body>
+</html>

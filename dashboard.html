@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard — Cascade</title>
+<link rel="preconnect" href="https://api.fontshare.com">
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@700,600,500,400&f[]=clash-display@700,600&display=swap">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px;-webkit-font-smoothing:antialiased}
+:root{
+  --ink:#0A0A0F;--ink2:#12121A;--ink3:#1A1A26;
+  --border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.12);
+  --blue:#4F6EF7;--blue-dim:#3D5AE5;--blue-faint:rgba(79,110,247,0.1);
+  --cyan:#00D4FF;--violet:#8B5CF6;--amber:#F59E0B;
+  --green:#10B981;--green-faint:rgba(16,185,129,0.08);
+  --red:#EF4444;--red-faint:rgba(239,68,68,0.08);
+  --t1:#F0F4FF;--t2:#8892B0;--t3:#4A5568;
+  --fd:'Clash Display',sans-serif;--fb:'Satoshi',sans-serif;
+}
+body{font-family:var(--fb);background:var(--ink);color:var(--t1);min-height:100vh}
+a{text-decoration:none;color:var(--blue)}
+
+/* NAV */
+.nav{background:rgba(10,10,15,.95);border-bottom:1px solid var(--border);padding:13px 0;position:sticky;top:0;z-index:100;backdrop-filter:blur(12px)}
+.nav-inner{max-width:1200px;margin:0 auto;padding:0 28px;display:flex;align-items:center;justify-content:space-between}
+.logo{display:flex;align-items:center;gap:8px;font-family:var(--fd);font-weight:700;font-size:1.1rem;color:var(--t1);letter-spacing:-.03em}
+.logo-mark{width:28px;height:28px;background:linear-gradient(135deg,var(--blue),var(--cyan));border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.nav-right{display:flex;align-items:center;gap:10px}
+.user-chip{display:flex;align-items:center;gap:8px;padding:6px 12px;background:var(--ink2);border:1px solid var(--border2);border-radius:99px;font-size:.8125rem;color:var(--t2)}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:8px 16px;font-family:var(--fb);font-size:.8125rem;font-weight:600;border-radius:7px;border:none;cursor:pointer;transition:all .15s}
+.btn-ghost{background:transparent;color:var(--t2);border:1px solid var(--border2)}.btn-ghost:hover{color:var(--t1)}
+.btn-blue{background:var(--blue);color:#fff}.btn-blue:hover{background:var(--blue-dim)}
+
+/* LAYOUT */
+.page{max-width:1200px;margin:0 auto;padding:32px 28px;display:grid;grid-template-columns:300px 1fr;gap:24px;align-items:start}
+
+/* SIDEBAR */
+.sidebar{position:sticky;top:72px;display:flex;flex-direction:column;gap:16px}
+
+/* TOOLS PANEL */
+.panel{background:var(--ink2);border:1px solid var(--border2);border-radius:14px;overflow:hidden}
+.panel-header{padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.panel-title{font-family:var(--fd);font-weight:700;font-size:.9375rem;color:var(--t1);letter-spacing:-.02em}
+.panel-body{padding:12px}
+
+.tool-item{display:flex;align-items:center;gap:10px;padding:10px 11px;border-radius:9px;transition:background .15s;margin-bottom:4px}
+.tool-item:last-child{margin-bottom:0}
+.tool-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0}
+.tool-info{flex:1;min-width:0}
+.tool-name{font-size:.8125rem;font-weight:600;color:var(--t1)}
+.tool-status{font-size:.625rem;color:var(--t3);margin-top:1px}
+.tool-btn{font-size:.625rem;font-weight:700;padding:3px 9px;border-radius:5px;border:none;cursor:pointer;font-family:var(--fb);white-space:nowrap;transition:all .15s}
+.tool-btn.connect{background:var(--blue-faint);color:var(--blue);border:1px solid rgba(79,110,247,.2)}.tool-btn.connect:hover{background:rgba(79,110,247,.2)}
+.tool-btn.connected{background:var(--green-faint);color:var(--green);border:1px solid rgba(16,185,129,.2);cursor:default}
+.tool-btn.disconnect{background:var(--red-faint);color:var(--red);border:1px solid rgba(239,68,68,.2)}.tool-btn.disconnect:hover{background:rgba(239,68,68,.15)}
+.tool-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+
+/* API KEY PANEL */
+.api-key-row{display:flex;gap:6px;margin-top:8px}
+.api-key-input{flex:1;padding:9px 11px;background:var(--ink);border:1px solid var(--border2);border-radius:7px;font-family:monospace;font-size:.75rem;color:var(--t1);outline:none;transition:border-color .15s}
+.api-key-input:focus{border-color:var(--blue)}
+.api-key-input::placeholder{color:var(--t3)}
+.api-key-save{padding:9px 14px;background:var(--blue);color:#fff;border:none;border-radius:7px;font-family:var(--fb);font-size:.75rem;font-weight:700;cursor:pointer;white-space:nowrap}
+
+/* MAIN */
+.main{display:flex;flex-direction:column;gap:20px}
+
+/* AGENT PANEL */
+.agent-panel{background:var(--ink2);border:1px solid var(--border2);border-radius:14px;overflow:hidden}
+.agent-header{padding:18px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.agent-title{font-family:var(--fd);font-weight:700;font-size:1.0625rem;color:var(--t1);letter-spacing:-.02em}
+.agent-sub{font-size:.8125rem;color:var(--t3);margin-top:2px}
+.timeframe-select{padding:7px 12px;background:var(--ink3);border:1px solid var(--border2);border-radius:7px;color:var(--t2);font-family:var(--fb);font-size:.8125rem;outline:none;cursor:pointer}
+
+.agent-body{padding:20px}
+
+/* Pull results */
+.pull-empty{text-align:center;padding:40px 20px;border:1px dashed var(--border2);border-radius:10px}
+.pull-empty-icon{font-size:2.5rem;margin-bottom:12px}
+.pull-empty-title{font-family:var(--fd);font-weight:700;font-size:1rem;color:var(--t1);margin-bottom:6px;letter-spacing:-.02em}
+.pull-empty-sub{font-size:.8125rem;color:var(--t2);line-height:1.6;max-width:320px;margin:0 auto}
+.pull-btn{display:inline-flex;align-items:center;gap:7px;padding:11px 22px;background:var(--blue);color:#fff;border:none;border-radius:9px;font-family:var(--fb);font-size:.875rem;font-weight:700;cursor:pointer;transition:all .15s;margin-top:16px}
+.pull-btn:hover{background:var(--blue-dim)}
+.pull-btn:disabled{opacity:.4;cursor:not-allowed}
+
+/* Pulled data display */
+.pulled-data{display:none}
+.pulled-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.pulled-title{font-size:.6875rem;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.1em}
+.pulled-meta{font-size:.6875rem;color:var(--t3)}
+.tool-section{margin-bottom:12px;background:var(--ink3);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.tool-section-header{padding:10px 14px;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--border)}
+.tool-section-icon{font-size:.875rem}
+.tool-section-name{font-size:.75rem;font-weight:700;color:var(--t1)}
+.tool-section-count{font-size:.625rem;color:var(--t3);margin-left:auto}
+.tool-section-items{padding:8px 14px 10px}
+.tool-item-row{font-size:.75rem;color:var(--t2);padding:3px 0;display:flex;align-items:flex-start;gap:6px;line-height:1.4}
+.tool-item-bullet{color:var(--blue);flex-shrink:0;margin-top:2px}
+
+/* Context input */
+.context-label{font-size:.6875rem;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.08em;margin:14px 0 7px}
+.context-input{width:100%;padding:12px 14px;background:var(--ink3);border:1px solid var(--border2);border-radius:9px;font-family:var(--fb);font-size:.875rem;color:var(--t1);outline:none;transition:border-color .15s;resize:vertical;min-height:80px;line-height:1.6}
+.context-input:focus{border-color:var(--blue)}
+.context-input::placeholder{color:var(--t3)}
+
+/* Generate button */
+.generate-row{display:flex;align-items:center;justify-content:space-between;margin-top:16px;padding-top:16px;border-top:1px solid var(--border)}
+.generate-hint{font-size:.75rem;color:var(--t3)}
+.generate-btn{display:flex;align-items:center;gap:8px;padding:12px 24px;background:linear-gradient(135deg,var(--blue),var(--violet));color:#fff;border:none;border-radius:9px;font-family:var(--fb);font-size:.9375rem;font-weight:700;cursor:pointer;transition:all .2s;box-shadow:0 0 24px rgba(79,110,247,.3)}
+.generate-btn:hover{transform:translateY(-1px);box-shadow:0 0 36px rgba(79,110,247,.4)}
+.generate-btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+@keyframes spin{to{transform:rotate(360deg)}}
+.spinner{width:15px;height:15px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;display:none}
+
+/* OUTPUTS */
+.outputs-panel{display:none}
+.outputs-panel.show{display:block}
+.outputs-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.outputs-title{font-family:var(--fd);font-weight:700;font-size:1.0625rem;color:var(--t1);letter-spacing:-.02em}
+.outputs-tabs{display:flex;gap:4px;background:var(--ink2);border:1px solid var(--border2);border-radius:10px;padding:4px;flex-wrap:wrap}
+.output-tab{padding:7px 14px;border-radius:7px;cursor:pointer;font-size:.8125rem;font-weight:500;color:var(--t3);transition:all .15s;border:none;background:none;font-family:var(--fb)}
+.output-tab.active{background:var(--ink3);color:var(--t1)}
+.output-content{background:var(--ink2);border:1px solid var(--border2);border-radius:14px;overflow:hidden}
+.output-content-header{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.output-audience-label{font-size:.625rem;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:.08em}
+.output-name{font-size:.9375rem;font-weight:600;color:var(--t1)}
+.copy-btn{display:flex;align-items:center;gap:5px;padding:6px 12px;background:var(--ink3);border:1px solid var(--border2);border-radius:6px;font-size:.75rem;font-weight:600;color:var(--t2);cursor:pointer;font-family:var(--fb);transition:all .15s}
+.copy-btn:hover{color:var(--t1);border-color:rgba(255,255,255,.2)}
+.output-body{padding:20px 22px;font-size:.9375rem;color:var(--t1);line-height:1.75;white-space:pre-wrap;min-height:180px;max-height:420px;overflow-y:auto}
+.output-tone-row{padding:12px 18px;border-top:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.tone-label{font-size:.6875rem;color:var(--t3);font-weight:600;text-transform:uppercase;letter-spacing:.08em}
+.tone-btn{font-size:.6875rem;font-weight:600;padding:4px 10px;border-radius:5px;border:1px solid var(--border2);background:transparent;color:var(--t3);cursor:pointer;font-family:var(--fb);transition:all .15s}
+.tone-btn.active{background:var(--blue-faint);color:var(--blue);border-color:rgba(79,110,247,.3)}
+.tone-btn:hover:not(.active){color:var(--t2)}
+
+/* TOAST */
+.toast{position:fixed;bottom:20px;right:20px;background:var(--ink3);border:1px solid var(--border2);border-radius:9px;padding:11px 16px;font-size:.875rem;color:var(--t1);z-index:999;display:flex;align-items:center;gap:8px;box-shadow:0 8px 32px rgba(0,0,0,.4);animation:toastIn .25s ease}
+@keyframes toastIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* HISTORY */
+.history-item{padding:12px 14px;background:var(--ink3);border:1px solid var(--border);border-radius:9px;margin-bottom:8px;cursor:pointer;transition:border-color .15s}
+.history-item:hover{border-color:var(--blue)}
+.history-date{font-size:.6875rem;color:var(--t3);margin-bottom:3px}
+.history-preview{font-size:.8125rem;color:var(--t2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.history-tools{display:flex;gap:4px;margin-top:6px;flex-wrap:wrap}
+.history-tool-pill{font-size:.5rem;font-weight:700;padding:2px 6px;border-radius:3px;background:var(--blue-faint);color:var(--blue)}
+
+@media(max-width:900px){.page{grid-template-columns:1fr}.sidebar{position:static}}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="logo">
+      <div class="logo-mark">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+          <path d="M12 3C8 3 5 6 5 9c0 2 1 3.5 2 4.5" stroke="white" stroke-width="2" stroke-linecap="round"/>
+          <path d="M12 8C9 8 7 10 7 12.5c0 1.5.7 2.8 1.5 3.5" stroke="white" stroke-width="2" stroke-linecap="round" opacity=".7"/>
+          <path d="M12 13c-2 0-3 1.5-3 3s1 3 3 3 3-1.5 3-3-1-3-3-3z" fill="white"/>
+        </svg>
+      </div>
+      Cascade
+    </a>
+    <div class="nav-right">
+      <div class="user-chip" id="user-chip">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <span id="user-email-display">loading...</span>
+      </div>
+      <button class="btn btn-ghost" onclick="signOut()">Sign out</button>
+    </div>
+  </div>
+</nav>
+
+<div class="page">
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <!-- API Key -->
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title">Claude API Key</div>
+        <span id="api-key-status" style="font-size:.625rem;font-weight:700;color:var(--t3)">Not set</span>
+      </div>
+      <div class="panel-body">
+        <div style="font-size:.75rem;color:var(--t2);margin-bottom:8px;line-height:1.5">Required to generate updates. Your key, your data.</div>
+        <div class="api-key-row">
+          <input type="password" class="api-key-input" id="api-key-input" placeholder="sk-ant-api03-...">
+          <button class="api-key-save" onclick="saveApiKey()">Save</button>
+        </div>
+        <div style="font-size:.6875rem;color:var(--t3);margin-top:6px">~$0.05 per update · <a href="https://console.anthropic.com" target="_blank" style="color:var(--blue)">Get key →</a></div>
+      </div>
+    </div>
+
+    <!-- Tool Connections -->
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title">Connected Tools</div>
+        <span id="connected-count" style="font-size:.6875rem;font-weight:700;color:var(--t3)">0 connected</span>
+      </div>
+      <div class="panel-body" id="tools-list">
+        <!-- Populated by JS -->
+      </div>
+    </div>
+
+    <!-- Update History -->
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title">Update History</div>
+      </div>
+      <div class="panel-body" id="history-list">
+        <div style="text-align:center;padding:20px;color:var(--t3);font-size:.8125rem">No updates yet</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+    <!-- Agent Panel -->
+    <div class="agent-panel">
+      <div class="agent-header">
+        <div>
+          <div class="agent-title">Weekly Update Agent</div>
+          <div class="agent-sub" id="agent-sub">Connect your tools and pull this week's activity</div>
+        </div>
+        <select class="timeframe-select" id="timeframe">
+          <option value="7">Last 7 days</option>
+          <option value="14">Last 14 days</option>
+          <option value="30">Last 30 days</option>
+          <option value="custom">This sprint</option>
+        </select>
+      </div>
+      <div class="agent-body">
+
+        <!-- Empty state -->
+        <div class="pull-empty" id="pull-empty">
+          <div class="pull-empty-icon">⚡</div>
+          <div class="pull-empty-title">Ready to pull your week</div>
+          <div class="pull-empty-sub">Connect at least one tool on the left, then let the agent scan what happened.</div>
+          <button class="pull-btn" id="pull-btn" onclick="pullData()" disabled>
+            <div class="spinner" id="pull-spinner"></div>
+            <svg id="pull-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+            Pull this week's activity
+          </button>
+        </div>
+
+        <!-- Pulled data -->
+        <div class="pulled-data" id="pulled-data">
+          <div class="pulled-header">
+            <div class="pulled-title">Agent found this week</div>
+            <div class="pulled-meta" id="pulled-meta"></div>
+          </div>
+          <div id="tool-sections"></div>
+
+          <div class="context-label">Add anything the agent missed</div>
+          <textarea class="context-input" id="extra-context" placeholder="e.g. 'We made a key decision to pause Feature X due to technical debt. The exec review was moved to next week.'"></textarea>
+
+          <div class="generate-row">
+            <div class="generate-hint" id="generate-hint">6 updates ready to generate</div>
+            <button class="generate-btn" id="generate-btn" onclick="generateUpdates()">
+              <div class="spinner" id="gen-spinner"></div>
+              <svg id="gen-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+              Generate 6 updates
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Outputs Panel -->
+    <div class="outputs-panel" id="outputs-panel">
+      <div class="outputs-header">
+        <div class="outputs-title">✦ Your stakeholder updates</div>
+        <button class="btn btn-ghost" onclick="copyAll()" style="font-size:.75rem">Copy all →</button>
+      </div>
+
+      <div class="outputs-tabs" id="outputs-tabs" style="margin-bottom:14px">
+        <!-- Populated by JS -->
+      </div>
+
+      <div class="output-content">
+        <div class="output-content-header">
+          <div>
+            <div class="output-audience-label" id="output-audience"></div>
+            <div class="output-name" id="output-name"></div>
+          </div>
+          <button class="copy-btn" onclick="copyCurrentOutput()">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            Copy
+          </button>
+        </div>
+        <div class="output-body" id="output-body">Select an update type above</div>
+        <div class="output-tone-row">
+          <span class="tone-label">Tone</span>
+          <button class="tone-btn active" onclick="setTone('balanced',this)">Balanced</button>
+          <button class="tone-btn" onclick="setTone('formal',this)">More formal</button>
+          <button class="tone-btn" onclick="setTone('casual',this)">More casual</button>
+          <button class="tone-btn" onclick="setTone('concise',this)">Shorter</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase-client.js"></script>
+<script src="js/tools.js"></script>
+<script src="js/agent.js"></script>
+</body>
+</html>
